@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   message_generation
   robotis_controller_msgs
-  op3_preview_walking_module_msgs
+  adol_preview_walking_module_msgs
 )
 
 find_package(Eigen REQUIRED)
