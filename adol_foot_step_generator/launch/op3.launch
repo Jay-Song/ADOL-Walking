@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<launch>    
+    <param name="/adol/dsp_ratio"             type="double"   value="0.2"/>
+    <param name="/adol/foot_z_swap_m"         type="double"   value="0.05"/>
+    <param name="/adol/body_z_swap_m"         type="double"   value="0.0"/>
+    <param name="/adol/y_zmp_convergence_m"   type="double"   value="0.0"/>
+
+    
+    <node pkg="adol_foot_step_generator" type="adol_foot_step_generator" name="adol_foot_step_generator" output="screen"/>
+</launch>

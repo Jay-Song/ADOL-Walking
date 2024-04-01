@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>adol_com_state_est_module</name>
+  <version>0.0.0</version>
+  <description>The adol_com_state_est_module package</description>
+
+  <maintainer email="hs3927@nyu.edu">Jay Song</maintainer>
+  <author email="hs3927@nyu.edu">Jay Song</author> 
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>roslib</depend>
+  <depend>robotis_controller_msgs</depend>
+  <depend>robotis_framework_common</depend>
+  <depend>cmake_modules</depend>
+  <depend>robotis_device</depend>
+  <depend>robotis_math</depend>
+  <depend>boost</depend>
+  <depend>eigen</depend>
+</package>
