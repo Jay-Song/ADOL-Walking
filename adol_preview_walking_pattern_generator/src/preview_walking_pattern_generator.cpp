@@ -6,27 +6,27 @@
  */
 
 
-#include "adol_preview_walking_pattern_generator/online_walking_pattern_generator.h"
+#include "adol_preview_walking_pattern_generator/preview_walking_pattern_generator.h"
 
 using namespace adol;
 
-OnlineWalkingPatternGenerator::OnlineWalkingPatternGenerator()
+PreviewWalkingPatternGenerator::PreviewWalkingPatternGenerator()
 {
   current_balancing_index_ = 0;
   switching_ratio_ = 0;
 }
 
-OnlineWalkingPatternGenerator::~OnlineWalkingPatternGenerator()
+PreviewWalkingPatternGenerator::~PreviewWalkingPatternGenerator()
 { }
 
-void OnlineWalkingPatternGenerator::initialize(double lipm_height_m, double preview_time_sec, double control_time_sec)
+void PreviewWalkingPatternGenerator::initialize(double lipm_height_m, double preview_time_sec, double control_time_sec)
 {
   x_lipm_.fill(0.0);       y_lipm_.fill(0.0);
   ep_calculator_.initialize(lipm_height_m, preview_time_sec, control_time_sec);
   process();
 }
 
-void OnlineWalkingPatternGenerator::process()
+void PreviewWalkingPatternGenerator::process()
 {
   ep_calculator_.calcDesiredPose();
 
@@ -54,42 +54,42 @@ void OnlineWalkingPatternGenerator::process()
   mat_robot_to_g_ = robotis_framework::getInverseTransformation(mat_g_to_robot_);
 }
 
-void OnlineWalkingPatternGenerator::start()
+void PreviewWalkingPatternGenerator::start()
 {
   ep_calculator_.start();
 }
 
-void OnlineWalkingPatternGenerator::stop()
+void PreviewWalkingPatternGenerator::stop()
 {
 
 }
 
-bool OnlineWalkingPatternGenerator::isRunning()
+bool PreviewWalkingPatternGenerator::isRunning()
 {
   return ep_calculator_.isRunning();
 }
 
-void OnlineWalkingPatternGenerator::addStepData(robotis_framework::StepData& step_data)
+void PreviewWalkingPatternGenerator::addStepData(robotis_framework::StepData& step_data)
 {
   ep_calculator_.addStepData(step_data);
 }
 
-void OnlineWalkingPatternGenerator::eraseLastStepData()
+void PreviewWalkingPatternGenerator::eraseLastStepData()
 {
   ep_calculator_.eraseLastStepData();
 }
 
-int  OnlineWalkingPatternGenerator::getNumofRemainingUnreservedStepData()
+int  PreviewWalkingPatternGenerator::getNumofRemainingUnreservedStepData()
 {
   return ep_calculator_.getNumofRemainingUnreservedStepData();
 }
 
-void OnlineWalkingPatternGenerator::getReferenceStepDatafotAddition(robotis_framework::StepData *ref_step_data_for_addition)
+void PreviewWalkingPatternGenerator::getReferenceStepDatafotAddition(robotis_framework::StepData *ref_step_data_for_addition)
 {
   ep_calculator_.getReferenceStepDatafotAddition(ref_step_data_for_addition);
 }
 
-void OnlineWalkingPatternGenerator::setInitialPose(robotis_framework::Pose3D r_foot, robotis_framework::Pose3D l_foot, robotis_framework::Pose3D pelvis)
+void PreviewWalkingPatternGenerator::setInitialPose(robotis_framework::Pose3D r_foot, robotis_framework::Pose3D l_foot, robotis_framework::Pose3D pelvis)
 {
   ep_calculator_.setInitialPose(r_foot, l_foot, pelvis);
   mat_g_to_rfoot_  = robotis_framework::getTransformationXYZRPY(r_foot.x, r_foot.y, r_foot.z, r_foot.roll, r_foot.pitch, r_foot.yaw);

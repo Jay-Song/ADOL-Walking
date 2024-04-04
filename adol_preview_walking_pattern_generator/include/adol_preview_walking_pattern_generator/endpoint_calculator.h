@@ -5,20 +5,20 @@
  *      Author: Jay Song
  */
 
-#ifndef ADOL_PREVIEW_WALKING_PATTERN_GENERATOR_ONLINE_ENDPOINT_CALCULATOR_H_
-#define ADOL_PREVIEW_WALKING_PATTERN_GENERATOR_ONLINE_ENDPOINT_CALCULATOR_H_
+#ifndef ADOL_PREVIEW_WALKING_PATTERN_GENERATOR_ENDPOINT_CALCULATOR_H_
+#define ADOL_PREVIEW_WALKING_PATTERN_GENERATOR_ENDPOINT_CALCULATOR_H_
 
 #include <boost/thread.hpp>
-#include "adol_preview_walking_pattern_generator/online_pelvis_xy_calculator.h"
+#include "adol_preview_walking_pattern_generator/pelvis_xy_calculator.h"
 
 namespace adol
 {
 
-class OnlineEndpointCalculator
+class EndpointCalculator
 {
 public:
-  OnlineEndpointCalculator();
-  ~OnlineEndpointCalculator();
+  EndpointCalculator();
+  ~EndpointCalculator();
 
   void initialize(double lipm_height_m, double preview_time_sec, double control_time_sec);
   void reInitialize();
@@ -46,11 +46,12 @@ public:
   Eigen::Vector3d x_lipm_, y_lipm_;
 
 private:
-  OnlinePelvisXYCalculator xy_calculator_;
+  PelvisXYCalculator xy_calculator_;
 
   void calcStepIdxData();
   void calcRefZMP();
   void calcSmoothRefZMP();
+  void calcEfficientZMP();
   void calcEndPoint();
 
   int preview_size_;

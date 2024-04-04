@@ -14,12 +14,12 @@
 namespace adol
 {
 
-class OnlinePelvisXYCalculator
+class PelvisXYCalculator
 {
 
 public:
-  OnlinePelvisXYCalculator();
-  ~OnlinePelvisXYCalculator();
+  PelvisXYCalculator();
+  ~PelvisXYCalculator();
 
   void initialize(double lipm_height_m, double preview_time_sec, double control_time_sec);
   void reInitialize(double lipm_height_m, double preview_time_sec, double control_time_sec);

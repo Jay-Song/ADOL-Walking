@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>adol_preview_walking_module</name>
+  <version>0.0.0</version>
+  <description>The adol_preview_walking_module package</description>
+
+  <maintainer email="hs3927@nyu.edu">Jay Song</maintainer>
+  <author email="hs3927@nyu.edu">Jay Song</author>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>cmake_modules</depend>
+  <depend>robotis_framework_common</depend>
+  <depend>robotis_controller_msgs</depend>
+  <depend>adol_preview_walking_pattern_generator</depend>
+  <depend>op3_kinematics_dynamics</depend>
+  
+</package>

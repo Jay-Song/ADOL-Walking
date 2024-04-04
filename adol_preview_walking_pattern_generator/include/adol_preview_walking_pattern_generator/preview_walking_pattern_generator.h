@@ -8,16 +8,16 @@
 #ifndef ADOL_PREVIEW_WALKING_PATTERN_GENERATOR_ONLINE_WALKING_PATTERN_GENERATOR_CALCULATOR_H_
 #define ADOL_PREVIEW_WALKING_PATTERN_GENERATOR_ONLINE_WALKING_PATTERN_GENERATOR_CALCULATOR_H_
 
-#include "adol_preview_walking_pattern_generator/online_endpoint_calculator.h"
+#include "adol_preview_walking_pattern_generator/endpoint_calculator.h"
 
 namespace adol
 {
 
-class OnlineWalkingPatternGenerator
+class PreviewWalkingPatternGenerator
 {
 public:
-  OnlineWalkingPatternGenerator();
-  ~OnlineWalkingPatternGenerator();
+  PreviewWalkingPatternGenerator();
+  ~PreviewWalkingPatternGenerator();
 
   void initialize(double lipm_height_m, double preview_time_sec, double control_time_sec);
 
@@ -49,7 +49,7 @@ public:
   Eigen::Vector3d x_lipm_, y_lipm_;
 
 private:
-  OnlineEndpointCalculator ep_calculator_;
+  EndpointCalculator ep_calculator_;
 
 };
 

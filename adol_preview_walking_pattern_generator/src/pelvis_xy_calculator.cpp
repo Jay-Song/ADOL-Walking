@@ -5,12 +5,12 @@
  *      Author: Jay Song
  */
 
-#include "adol_preview_walking_pattern_generator/online_pelvis_xy_calculator.h"
+#include "adol_preview_walking_pattern_generator/pelvis_xy_calculator.h"
 
 using namespace adol;
 
 
-OnlinePelvisXYCalculator::OnlinePelvisXYCalculator()
+PelvisXYCalculator::PelvisXYCalculator()
 {
   lipm_height_m_ = 0.7;
 
@@ -28,10 +28,10 @@ OnlinePelvisXYCalculator::OnlinePelvisXYCalculator()
   prev_gains_ = 0;
 }
 
-OnlinePelvisXYCalculator::~OnlinePelvisXYCalculator()
+PelvisXYCalculator::~PelvisXYCalculator()
 {  }
 
-void OnlinePelvisXYCalculator::initialize(double lipm_height_m, double preview_time_sec, double control_time_sec)
+void PelvisXYCalculator::initialize(double lipm_height_m, double preview_time_sec, double control_time_sec)
 {
   lipm_height_m_ = lipm_height_m;
   preview_time_sec_ = preview_time_sec;
@@ -72,12 +72,12 @@ void OnlinePelvisXYCalculator::initialize(double lipm_height_m, double preview_t
   x_lipm_.fill(0.0); y_lipm_.fill(0.0);
 }
 
-void OnlinePelvisXYCalculator::reInitialize(double lipm_height_m, double preview_time_sec, double control_time_sec)
+void PelvisXYCalculator::reInitialize(double lipm_height_m, double preview_time_sec, double control_time_sec)
 {
   initialize(lipm_height_m, preview_time_sec, control_time_sec);
 }
 
-void OnlinePelvisXYCalculator::reInitialize()
+void PelvisXYCalculator::reInitialize()
 {
   sum_of_zmp_x_ = 0;
   sum_of_zmp_y_ = 0;
@@ -87,7 +87,7 @@ void OnlinePelvisXYCalculator::reInitialize()
 }
 
 
-void OnlinePelvisXYCalculator::calcNextPelvisXY(const Eigen::VectorXd& reference_zmp_x,  const Eigen::VectorXd& reference_zmp_y)
+void PelvisXYCalculator::calcNextPelvisXY(const Eigen::VectorXd& reference_zmp_x,  const Eigen::VectorXd& reference_zmp_y)
 {
   //  u_x(0,0) = -k_s_*(sum_of_cx_ - sum_of_zmp_x_) - (k_x_(0,0)*x_lipm_(0,0) + k_x_(0,1)*x_lipm_(1,0) + k_x_(0,2)*x_lipm_(2,0)) + f_*reference_zmp_x;
   //  u_y(0,0) = -k_s_*(sum_of_cy_ - sum_of_zmp_y_) - (k_x_(0,0)*y_lipm_(0,0) + k_x_(0,1)*y_lipm_(1,0) + k_x_(0,2)*y_lipm_(2,0)) + f_*reference_zmp_y;
