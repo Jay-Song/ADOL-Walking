@@ -9,6 +9,7 @@ int16 IN_WALKING_ENDING   = 2 #WalkingEnding
 
 ## Unit [sec]
 float32 abs_step_time #global time
+float32 step_duration
 
 # dsp_ratio >= 0.0 dsp_ratio < 1.0, recommend value is 0.2 
 float32 dsp_ratio

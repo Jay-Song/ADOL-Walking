@@ -185,6 +185,7 @@ void FootStepGenerator::getStepDataFromStepData2DArray(adol_preview_walking_modu
 
   stp_data = ref_step_data;
   stp_data.time_data.abs_step_time += start_end_time_sec_;
+  stp_data.time_data.step_duration = start_end_time_sec_;
   stp_data.time_data.dsp_ratio = dsp_ratio_;
   stp_data.time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_STARTING;
   stp_data.time_data.start_time_delay_ratio_x     = 0.0;
@@ -209,6 +210,7 @@ void FootStepGenerator::getStepDataFromStepData2DArray(adol_preview_walking_modu
   for(unsigned int stp_idx = 0; stp_idx < request_step_2d->footsteps_2d.size(); stp_idx++)
   {
     stp_data.time_data.abs_step_time += step_time_sec_;
+    stp_data.time_data.step_duration = step_time_sec_;
     stp_data.time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING;
 
     if(request_step_2d->footsteps_2d[stp_idx].moving_foot == adol_foot_step_generator::Step2D::LEFT_FOOT_SWING)
@@ -252,6 +254,7 @@ void FootStepGenerator::getStepDataFromStepData2DArray(adol_preview_walking_modu
   }
 
   stp_data.time_data.abs_step_time += start_end_time_sec_;
+  stp_data.time_data.step_duration  = start_end_time_sec_;
   stp_data.time_data.dsp_ratio = dsp_ratio_;
   stp_data.time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
   stp_data.time_data.start_time_delay_ratio_x     = 0.0;
@@ -369,6 +372,7 @@ bool FootStepGenerator::calcStep(const adol_preview_walking_module_msgs::StepDat
           || (fabs(poseLtoRF.x - poseLtoLF.x) > 0))
       {
         stp_data[0].time_data.abs_step_time += step_time_sec_;
+        stp_data[0].time_data.step_duration  = step_time_sec_;
         if(ref_step_data.position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
         {
           stp_data[0].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -396,6 +400,7 @@ bool FootStepGenerator::calcStep(const adol_preview_walking_module_msgs::StepDat
         if(stp_data[0].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
         {
           stp_data[1].time_data.abs_step_time += step_time_sec_;
+          stp_data[1].time_data.step_duration  = step_time_sec_;
           stp_data[1].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
           step_data_array_.push_back(stp_data[1]);
         }
@@ -405,6 +410,7 @@ bool FootStepGenerator::calcStep(const adol_preview_walking_module_msgs::StepDat
         if(stp_data[0].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING)
         {
           stp_data[1].time_data.abs_step_time += step_time_sec_;
+          stp_data[1].time_data.step_duration  = step_time_sec_;
           stp_data[1].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING;
           step_data_array_.push_back(stp_data[1]);
         }
@@ -511,6 +517,7 @@ void FootStepGenerator::calcFBStep(const adol_preview_walking_module_msgs::StepD
   if(ref_step_data.time_data.walking_state == adol_preview_walking_module_msgs::StepTimeData::IN_WALKING)
   {
     stp_data[0].time_data.abs_step_time += step_time_sec_;
+    stp_data[0].time_data.step_duration  = step_time_sec_;
     stp_data[0].time_data.dsp_ratio = dsp_ratio_;
     stp_data[0].position_data.body_z_swap = body_z_swap_m_;
     stp_data[0].position_data.foot_z_swap = foot_z_swap_m_;
@@ -529,6 +536,7 @@ void FootStepGenerator::calcFBStep(const adol_preview_walking_module_msgs::StepD
     {
       stp_data[stp_idx] = stp_data[stp_idx-1];
       stp_data[stp_idx].time_data.abs_step_time += step_time_sec_;
+      stp_data[stp_idx].time_data.step_duration  = step_time_sec_;
       if(stp_data[stp_idx].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
       {
         stp_data[stp_idx].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -543,6 +551,7 @@ void FootStepGenerator::calcFBStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-2] = stp_data[num_of_step_-3];
     stp_data[num_of_step_-2].time_data.abs_step_time += step_time_sec_;
+    stp_data[num_of_step_-2].time_data.step_duration  = step_time_sec_;
     if(stp_data[num_of_step_-2].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
     {
       stp_data[num_of_step_-2].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -556,6 +565,7 @@ void FootStepGenerator::calcFBStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-1] = stp_data[num_of_step_-2];
     stp_data[num_of_step_-1].time_data.abs_step_time += start_end_time_sec_;
+    stp_data[num_of_step_-1].time_data.step_duration  = start_end_time_sec_;
     stp_data[num_of_step_-1].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
     stp_data[num_of_step_-1].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[num_of_step_-1].position_data.body_z_swap = 0;
@@ -564,6 +574,7 @@ void FootStepGenerator::calcFBStep(const adol_preview_walking_module_msgs::StepD
   {
     stp_data[0].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_STARTING;
     stp_data[0].time_data.abs_step_time += 0.1;//start_end_time_sec_;
+    stp_data[0].time_data.step_duration  = 0.1;
     stp_data[0].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[0].position_data.body_z_swap = 0;
 
@@ -572,6 +583,7 @@ void FootStepGenerator::calcFBStep(const adol_preview_walking_module_msgs::StepD
       stp_data[stp_idx] = stp_data[stp_idx-1];
       stp_data[stp_idx].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING;
       stp_data[stp_idx].time_data.abs_step_time += step_time_sec_;
+      stp_data[stp_idx].time_data.step_duration  = step_time_sec_;
       stp_data[stp_idx].time_data.dsp_ratio = dsp_ratio_;
       stp_data[stp_idx].position_data.body_z_swap = body_z_swap_m_;
       stp_data[stp_idx].position_data.foot_z_swap = foot_z_swap_m_;
@@ -590,6 +602,7 @@ void FootStepGenerator::calcFBStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-2] = stp_data[num_of_step_-3];
     stp_data[num_of_step_-2].time_data.abs_step_time += step_time_sec_;
+    stp_data[num_of_step_-2].time_data.step_duration  = step_time_sec_;
     if(stp_data[num_of_step_-2].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
     {
       stp_data[num_of_step_-2].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -603,6 +616,7 @@ void FootStepGenerator::calcFBStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-1] = stp_data[num_of_step_-2];
     stp_data[num_of_step_-1].time_data.abs_step_time += start_end_time_sec_;
+    stp_data[num_of_step_-1].time_data.step_duration  = start_end_time_sec_;
     stp_data[num_of_step_-1].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
     stp_data[num_of_step_-1].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[num_of_step_-1].position_data.body_z_swap = 0;
@@ -622,6 +636,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
   if(ref_step_data.time_data.walking_state == adol_preview_walking_module_msgs::StepTimeData::IN_WALKING)
   {
     stp_data[0].time_data.abs_step_time += step_time_sec_;
+    stp_data[0].time_data.step_duration  = step_time_sec_;
     stp_data[0].time_data.dsp_ratio = dsp_ratio_;
     stp_data[0].position_data.body_z_swap = body_z_swap_m_;
     stp_data[0].position_data.foot_z_swap = foot_z_swap_m_;
@@ -640,6 +655,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
     {
       stp_data[stp_idx] = stp_data[stp_idx-1];
       stp_data[stp_idx].time_data.abs_step_time += step_time_sec_;
+      stp_data[stp_idx].time_data.step_duration  = step_time_sec_;
       if(stp_data[stp_idx].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
       {
         stp_data[stp_idx].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -654,6 +670,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-2] = stp_data[num_of_step_-3];
     stp_data[num_of_step_-2].time_data.abs_step_time += step_time_sec_;
+    stp_data[num_of_step_-2].time_data.step_duration  = step_time_sec_;
     if(stp_data[num_of_step_-2].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
     {
       stp_data[num_of_step_-2].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -667,6 +684,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-1] = stp_data[num_of_step_-2];
     stp_data[num_of_step_-1].time_data.abs_step_time += start_end_time_sec_;
+    stp_data[num_of_step_-1].time_data.step_duration  = start_end_time_sec_;
     stp_data[num_of_step_-1].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
     stp_data[num_of_step_-1].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[num_of_step_-1].position_data.body_z_swap = 0;
@@ -675,6 +693,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
   {
     stp_data[0].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_STARTING;
     stp_data[0].time_data.abs_step_time += 0.1;//start_end_time_sec_;
+    stp_data[0].time_data.step_duration  = 0.1;
     stp_data[0].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[0].position_data.body_z_swap = 0;
 
@@ -682,6 +701,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
     stp_data[1] = stp_data[0];
     stp_data[1].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING;
     stp_data[1].time_data.abs_step_time += step_time_sec_;
+    stp_data[1].time_data.step_duration  = step_time_sec_;
     stp_data[1].time_data.dsp_ratio = dsp_ratio_;
     stp_data[1].position_data.body_z_swap = body_z_swap_m_;
     stp_data[1].position_data.foot_z_swap = foot_z_swap_m_;
@@ -701,6 +721,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
     {
       stp_data[stp_idx] = stp_data[stp_idx-1];
       stp_data[stp_idx].time_data.abs_step_time += step_time_sec_;
+      stp_data[stp_idx].time_data.step_duration  = step_time_sec_;
       if(stp_data[stp_idx].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
       {
         stp_data[stp_idx].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -715,6 +736,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-2] = stp_data[num_of_step_-3];
     stp_data[num_of_step_-2].time_data.abs_step_time += step_time_sec_;
+    stp_data[num_of_step_-2].time_data.step_duration  = step_time_sec_;
     if(stp_data[num_of_step_-2].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
     {
       stp_data[num_of_step_-2].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -728,6 +750,7 @@ void FootStepGenerator::calcRLStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-1] = stp_data[num_of_step_-2];
     stp_data[num_of_step_-1].time_data.abs_step_time += start_end_time_sec_;
+    stp_data[num_of_step_-1].time_data.step_duration  = start_end_time_sec_;
     stp_data[num_of_step_-1].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
     stp_data[num_of_step_-1].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[num_of_step_-1].position_data.body_z_swap = 0;
@@ -748,6 +771,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
   {
     stp_data[0].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING;
     stp_data[0].time_data.abs_step_time += step_time_sec_;
+    stp_data[0].time_data.step_duration  = step_time_sec_;
     stp_data[0].time_data.dsp_ratio = dsp_ratio_;
     stp_data[0].position_data.body_z_swap = body_z_swap_m_;
     stp_data[0].position_data.foot_z_swap = foot_z_swap_m_;
@@ -780,6 +804,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
     {
       stp_data[stp_idx] = stp_data[stp_idx-1];
       stp_data[stp_idx].time_data.abs_step_time += step_time_sec_;
+      stp_data[stp_idx].time_data.step_duration  = step_time_sec_;
       if(stp_data[stp_idx].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
       {
         stp_data[stp_idx].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -812,6 +837,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-2] = stp_data[num_of_step_-3];
     stp_data[num_of_step_-2].time_data.abs_step_time += step_time_sec_;
+    stp_data[num_of_step_-2].time_data.step_duration  = step_time_sec_;
     if(stp_data[num_of_step_-2].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
     {
       stp_data[num_of_step_-2].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -830,6 +856,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-1] = stp_data[num_of_step_-2];
     stp_data[num_of_step_-1].time_data.abs_step_time += start_end_time_sec_;
+    stp_data[num_of_step_-1].time_data.step_duration  = start_end_time_sec_;
     stp_data[num_of_step_-1].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
     stp_data[num_of_step_-1].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[num_of_step_-1].position_data.body_z_swap = 0;
@@ -838,6 +865,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
   {
     stp_data[0].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_STARTING;
     stp_data[0].time_data.abs_step_time += 0.1;//start_end_time_sec_;
+    stp_data[0].time_data.step_duration  = 0.1;
     stp_data[0].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[0].position_data.body_z_swap = 0;
     stp_data[0].position_data.foot_z_swap = 0;
@@ -846,6 +874,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
     stp_data[1] = stp_data[0];
     stp_data[1].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING;
     stp_data[1].time_data.abs_step_time += step_time_sec_;
+    stp_data[1].time_data.step_duration  = step_time_sec_;
     stp_data[1].time_data.dsp_ratio = dsp_ratio_;
     stp_data[1].position_data.body_z_swap = body_z_swap_m_;
     stp_data[1].position_data.foot_z_swap = foot_z_swap_m_;
@@ -878,6 +907,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
     {
       stp_data[stp_idx] = stp_data[stp_idx-1];
       stp_data[stp_idx].time_data.abs_step_time += step_time_sec_;
+      stp_data[stp_idx].time_data.step_duration  = step_time_sec_;
       if(stp_data[stp_idx].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
       {
         stp_data[stp_idx].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -910,6 +940,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-2] = stp_data[num_of_step_-3];
     stp_data[num_of_step_-2].time_data.abs_step_time += step_time_sec_;
+    stp_data[num_of_step_-2].time_data.step_duration  = step_time_sec_;
     if(stp_data[num_of_step_-2].position_data.moving_foot == adol_preview_walking_module_msgs::StepPositionData::LEFT_FOOT_SWING)
     {
       stp_data[num_of_step_-2].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::RIGHT_FOOT_SWING;
@@ -928,6 +959,7 @@ void FootStepGenerator::calcRoStep(const adol_preview_walking_module_msgs::StepD
 
     stp_data[num_of_step_-1] = stp_data[num_of_step_-2];
     stp_data[num_of_step_-1].time_data.abs_step_time += start_end_time_sec_;
+    stp_data[num_of_step_-1].time_data.step_duration  = start_end_time_sec_;
     stp_data[num_of_step_-1].time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
     stp_data[num_of_step_-1].position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
     stp_data[num_of_step_-1].position_data.body_z_swap = 0;
@@ -946,12 +978,15 @@ void FootStepGenerator::calcStopStep(const adol_preview_walking_module_msgs::Ste
   stp_data = ref_step_data;
   stp_data.time_data.walking_state = adol_preview_walking_module_msgs::StepTimeData::IN_WALKING_ENDING;
   stp_data.time_data.abs_step_time += start_end_time_sec_;
+  stp_data.time_data.step_duration  = start_end_time_sec_;
   stp_data.position_data.body_z_swap = 0;
   stp_data.position_data.moving_foot = adol_preview_walking_module_msgs::StepPositionData::STANDING;
 
   step_data_array_.push_back(stp_data);
 }
 
+
+// Kicking is no updated yet 041324
 void FootStepGenerator::calcRightKickStep(adol_preview_walking_module_msgs::AddStepDataArray::Request::_step_data_array_type* step_data_array,
     const adol_preview_walking_module_msgs::StepData& ref_step_data)
 {
