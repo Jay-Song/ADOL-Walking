@@ -32,6 +32,12 @@ public:
 
   void calcDesiredPose();
 
+  void setZMPmode(uint8_t mode);
+
+  //const static uint8_t NORMAL_MODE = 0;
+  const static uint8_t SMOOTH_MODE = 1;
+  const static uint8_t EFFICIENT_MODE = 2;
+
   void start();
   bool isRunning();
 
@@ -49,12 +55,24 @@ private:
   PelvisXYCalculator xy_calculator_;
 
   void calcStepIdxData();
+  
+  void calcEndPoint();  //  1 step: DS -> SS -> DS
+  
   void calcRefZMP();
   void calcSmoothRefZMP();
+  
   void calcEfficientZMP();
-  void calcEndPoint();
+  void calcEfficientZMPSubRoutine(uint32_t step_idx, uint32_t ref_zmp_idx);
+  void getZMPforDS(double calc_curr_time_sec, 
+                   robotis_framework::StepData* prev_stp_data, robotis_framework::StepData* curr_stp_data, robotis_framework::StepData* next_stp_data, 
+                   double* ds_start_zmp_x_m, double* ds_start_zmp_y_m, double* ds_end_zmp_x_m,   double* ds_end_zmp_y_m,
+                   double* ds_start_time_sec, double* ds_end_time_sec);
+  void getZMPforSS(robotis_framework::StepData* prev_stp_data, robotis_framework::StepData* curr_stp_data, robotis_framework::StepData* next_stp_data, 
+                   double* ss_start_zmp_x_m, double* ss_start_zmp_y_m, double* ss_end_zmp_x_m,   double* ss_end_zmp_y_m);
 
-  int preview_size_;
+   
+  uint8_t mode_;
+  int32_t preview_size_;
   double walking_time_;    //Absolute Time
   double reference_time_;  //Absolute Time
   double preview_time_sec_;
@@ -63,6 +81,7 @@ private:
   std::vector<robotis_framework::StepData> added_step_data_;
   robotis_framework::StepData current_step_data_;
   robotis_framework::StepData reference_step_data_for_addition_;
+  robotis_framework::StepData previous_step_data_;
   robotis_framework::Pose3D initial_right_foot_pose_, initial_left_foot_pose_, initial_body_pose_;
   robotis_framework::Pose3D previous_step_right_foot_pose_, previous_step_left_foot_pose_, previous_step_body_pose_;
 
