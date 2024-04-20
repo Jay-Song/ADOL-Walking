@@ -24,7 +24,7 @@ public:
   PreviewWalking();
   virtual ~PreviewWalking();
 
-  void initialize(double control_cycle_sec);
+  void initialize(double lipm_height_m, double preview_time_sec, double control_cycle_sec);
   void start();
 
   void process();

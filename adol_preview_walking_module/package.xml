@@ -17,6 +17,7 @@
   <depend>cmake_modules</depend>
   <depend>robotis_framework_common</depend>
   <depend>robotis_controller_msgs</depend>
+  <depend>adol_preview_walking_module_msgs</depend>
   <depend>adol_preview_walking_pattern_generator</depend>
   <depend>op3_kinematics_dynamics</depend>
   

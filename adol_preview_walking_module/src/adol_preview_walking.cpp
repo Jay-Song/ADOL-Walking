@@ -50,7 +50,7 @@ PreviewWalking::~PreviewWalking()
     delete op3_kd_;
 }
 
-void PreviewWalking::initialize(double control_cycle_sec)
+void PreviewWalking::initialize(double lipm_height_m, double preview_time_sec, double control_cycle_sec)
 {
   op3_kd_ = new robotis_op::OP3KinematicsDynamics(robotis_op::WholeBody);
 
@@ -65,7 +65,7 @@ void PreviewWalking::initialize(double control_cycle_sec)
   pelvis.roll = 0.0; pelvis.pitch = 0.0; pelvis.yaw = 0;
 
   walking_pattern_.setInitialPose(r_foot, l_foot, pelvis);
-  walking_pattern_.initialize(0.4, 1.6, control_cycle_sec);
+  walking_pattern_.initialize(lipm_height_m, preview_time_sec, control_cycle_sec);
 
   // initialize balance
   //balance_ctrl_.initialize(control_cycle_sec);

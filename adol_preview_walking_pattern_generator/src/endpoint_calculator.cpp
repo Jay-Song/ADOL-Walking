@@ -119,8 +119,8 @@ void EndpointCalculator::setInitialPose(robotis_framework::Pose3D r_foot, roboti
 
 void EndpointCalculator::initialize(double lipm_height_m, double preview_time_sec, double control_time_sec)
 {
-  if(running)
-    return;
+  // if(running)
+  //   return;
 
   smooth_tra_.changeTrajectory(0,0,0,0,1,1,0,0);
 

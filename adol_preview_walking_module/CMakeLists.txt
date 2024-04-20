@@ -16,12 +16,13 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   geometry_msgs
   cmake_modules
-  robotis_framework_common
   robotis_controller_msgs
+  adol_preview_walking_module_msgs
+  robotis_framework_common
   adol_preview_walking_pattern_generator
   #heroehs_pd_balance_controller
   op3_kinematics_dynamics
-  #alice_walking_module_msgs
+  
 )
 ################################################################################
 # Declare ROS messages, services and actions
@@ -55,7 +56,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/adol_preview_walking.cpp
-  #src/online_walking_module.cpp
+  src/op3_preview_walking_module.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
