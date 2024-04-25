@@ -7,7 +7,6 @@
 
 #include "adol_foot_step_generator/message_callback.h"
 
-
 ros::ServiceClient   g_get_ref_step_data_client;
 ros::ServiceClient   g_add_step_data_array_client;
 
@@ -39,16 +38,18 @@ bool g_is_running_check_needed = false;
 std::string dsp_ratio_param_name = "/adol/dsp_ratio";
 std::string foot_z_swap_param_name = "/adol/foot_z_swap_m";
 std::string body_z_swap_param_name = "/adol/body_z_swap_m";
+std::string x_zmp_shift_param_name = "/adol/x_zmp_shift_m";
 std::string y_zmp_convergence_param_name = "/adol/y_zmp_convergence_m";
+std::string default_y_feet_offset_param_name = "/adol/default_y_feet_offset_m";
 
 void initialize(void)
 {
   ros::NodeHandle nh;
 
-  g_get_ref_step_data_client      = nh.serviceClient<adol_preview_walking_module_msgs::GetReferenceStepData>("/adol/online_walking/get_reference_step_data");
-  g_add_step_data_array_client    = nh.serviceClient<adol_preview_walking_module_msgs::AddStepDataArray>("/adol/online_walking/add_step_data");
-  g_set_balance_param_client      = nh.serviceClient<adol_preview_walking_module_msgs::SetBalanceParam>("/adol/online_walking/set_balance_param");
-  g_is_running_client             = nh.serviceClient<adol_preview_walking_module_msgs::IsRunning>("/adol/online_walking/is_running");
+  g_get_ref_step_data_client      = nh.serviceClient<adol_preview_walking_module_msgs::GetReferenceStepData>("/adol/preview_walking/get_reference_step_data");
+  g_add_step_data_array_client    = nh.serviceClient<adol_preview_walking_module_msgs::AddStepDataArray>("/adol/preview_walking/add_step_data");
+  g_set_balance_param_client      = nh.serviceClient<adol_preview_walking_module_msgs::SetBalanceParam>("/adol/preview_walking/set_balance_param");
+  g_is_running_client             = nh.serviceClient<adol_preview_walking_module_msgs::IsRunning>("/adol/preview_walking/is_running");
 
   g_walking_module_status_msg_sub = nh.subscribe("/robotis/status", 10, walkingModuleStatusMSGCallback);
 
@@ -65,7 +66,9 @@ void initialize(void)
   ros::param::get(dsp_ratio_param_name, g_foot_stp_generator.dsp_ratio_);
   ros::param::get(foot_z_swap_param_name, g_foot_stp_generator.foot_z_swap_m_);
   ros::param::get(body_z_swap_param_name, g_foot_stp_generator.body_z_swap_m_);
+  ros::param::get(x_zmp_shift_param_name, g_foot_stp_generator.x_zmp_shift_m_);
   ros::param::get(y_zmp_convergence_param_name, g_foot_stp_generator.y_zmp_convergence_m_);
+  ros::param::get(default_y_feet_offset_param_name, g_foot_stp_generator.default_y_feet_offset_m_);
 
   g_last_command_time = ros::Time::now().toSec();
 }
@@ -381,7 +384,6 @@ void walkingCommandCallback(const adol_foot_step_generator::FootStepCommand::Con
   }
 
 }
-
 
 void step2DArrayCallback(const adol_foot_step_generator::Step2DArray::ConstPtr& msg)
 {

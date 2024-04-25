@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>adol_walking_test_manager</name>
+  <version>0.0.0</version>
+  <description>The adol_walking_test_manager package</description>
+
+  <author email="hs3927@nyu.edu">Jay Song</author>
+  <maintainer email="hs3927@nyu.edu">Jay Song</maintainer>
+  
+  <license>TODO</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>robotis_controller_msgs</depend>
+  <depend>cmake_modules</depend>
+  <depend>dynamixel_sdk</depend>
+  <depend>robotis_framework_common</depend>
+  <depend>robotis_device</depend>
+  <depend>robotis_controller</depend>
+  <depend>robotis_math</depend>
+  <depend>op3_kinematics_dynamics</depend>
+  <depend>open_cr_module</depend>
+  <depend>op3_base_module</depend>
+  <depend>adol_preview_walking_module</depend>
+  
+  <export></export>
+</package>

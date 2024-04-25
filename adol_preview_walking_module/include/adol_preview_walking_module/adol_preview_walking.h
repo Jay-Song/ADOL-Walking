@@ -24,6 +24,8 @@ public:
   PreviewWalking();
   virtual ~PreviewWalking();
 
+  void setInitialPose(robotis_framework::Pose3D r_foot, robotis_framework::Pose3D l_foot, robotis_framework::Pose3D pelvis);
+
   void initialize(double lipm_height_m, double preview_time_sec, double control_cycle_sec);
   void start();
 
@@ -57,7 +59,6 @@ public:
   //int balance_index_;
   //int balance_error_;
   //heroehs::BalanceControlUsingPDController balance_ctrl_;
-
 
   void setCurrentIMUSensorOutput(double gyro_x, double gyro_y, double quat_x, double quat_y, double quat_z, double quat_w);
   void setCurrentFTSensorOutput(double rfx, double rfy, double rfz, double rtx, double rty, double rtz,

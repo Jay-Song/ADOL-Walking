@@ -52,6 +52,7 @@ public:
   bool isRunning();
 
   void setLIPMHeight(double height_m);
+  void setInitialPose(robotis_framework::Pose3D r_foot, robotis_framework::Pose3D l_foot, robotis_framework::Pose3D pelvis);
 
 private:
   void publishRobotPose(void);

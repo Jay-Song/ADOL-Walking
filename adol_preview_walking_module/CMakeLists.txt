@@ -36,9 +36,9 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES adol_preview_walking_module
-#  CATKIN_DEPENDS roscpp heroehs_online_walking_pattern_generator heroehs_pd_balance_controller alice_kinematics_dynamics
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS roscpp adol_preview_walking_module_msgs adol_preview_walking_pattern_generator op3_kinematics_dynamics
 #  DEPENDS system_lib
 )
 

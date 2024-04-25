@@ -61,7 +61,8 @@ public:
   double dsp_ratio_;
   double foot_z_swap_m_;
   double body_z_swap_m_;
-
+  
+  double x_zmp_shift_m_;
   double y_zmp_convergence_m_;
 
   double start_end_time_sec_;
@@ -71,7 +72,6 @@ public:
   double kick_far_m_;
   double kick_pitch_rad_;
   double kick_time_sec_;
-
 
 private:
   bool calcStep(const adol_preview_walking_module_msgs::StepData& ref_step_data, int previous_step_type,  int desired_step_type);

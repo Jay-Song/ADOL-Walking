@@ -96,7 +96,7 @@ EndpointCalculator::EndpointCalculator()
 
   switching_ratio_ = 0;
 
-  mode_ = SMOOTH_MODE;
+  mode_ = EFFICIENT_MODE;
 }
 
 EndpointCalculator::~EndpointCalculator()
@@ -942,7 +942,7 @@ void EndpointCalculator::calcEfficientZMPSubRoutine(uint32_t step_idx, uint32_t 
 
   double ds_start_time_sec, ds_end_time_sec = 0;
 
-  double ssp_time_start_sec, ssp_time_end_sec, calc_curr_time_sec;
+  double ss_time_start_sec, ss_time_end_sec, calc_curr_time_sec;
 
   robotis_framework::StepData *calc_prev_stp_data;
   robotis_framework::StepData *calc_curr_stp_data;
@@ -979,14 +979,14 @@ void EndpointCalculator::calcEfficientZMPSubRoutine(uint32_t step_idx, uint32_t 
       added_step_data_[step_idx].time_data.dsp_ratio;
 
       // DSP * Step Time * 0.5 + Prev Step Time
-      ssp_time_start_sec = calc_curr_stp_data->time_data.dsp_ratio * calc_curr_stp_data->time_data.step_duration * 0.5 + calc_prev_stp_data->time_data.abs_step_time;
+      ss_time_start_sec = calc_curr_stp_data->time_data.dsp_ratio * calc_curr_stp_data->time_data.step_duration * 0.5 + calc_prev_stp_data->time_data.abs_step_time;
       // (2 - DSP) * Step Time * 0.5 + Prev Step Time
-      ssp_time_end_sec = (2.0 - calc_curr_stp_data->time_data.dsp_ratio) * calc_curr_stp_data->time_data.step_duration * 0.5 + calc_prev_stp_data->time_data.abs_step_time;
+      ss_time_end_sec = (2.0 - calc_curr_stp_data->time_data.dsp_ratio) * calc_curr_stp_data->time_data.step_duration * 0.5 + calc_prev_stp_data->time_data.abs_step_time;
 
       calc_curr_time_sec = walking_time_ + ref_zmp_idx * control_time_sec_;
       // std::cout << walking_time_<< " " << calc_curr_time <<  " " << calc_ref_time  <<  " " << ssp_time_start  <<  " " << ssp_time_end << " " << added_step_data_[step_idx].time_data.abs_step_time << std::endl;
 
-      if (calc_curr_time_sec < ssp_time_start_sec) // during first DS
+      if (calc_curr_time_sec < ss_time_start_sec) // during first DS
       {
         getZMPforDS(calc_curr_time_sec, calc_prev_stp_data, calc_curr_stp_data, calc_next_stp_data,
                     &ds_start_zmp_x_m, &ds_start_zmp_y_m, &ds_end_zmp_x_m, &ds_end_zmp_y_m, &ds_start_time_sec, &ds_end_time_sec);
@@ -996,12 +996,12 @@ void EndpointCalculator::calcEfficientZMPSubRoutine(uint32_t step_idx, uint32_t 
         reference_zmp_x_(ref_zmp_idx, 0) = ds_start_zmp_x_m + (ds_end_zmp_x_m - ds_start_zmp_x_m) * zmp_moving_ratio;
         reference_zmp_y_(ref_zmp_idx, 0) = ds_start_zmp_y_m + (ds_end_zmp_y_m - ds_start_zmp_y_m) * zmp_moving_ratio;
       }
-      else if (calc_curr_time_sec <= ssp_time_end_sec) // during SS
+      else if (calc_curr_time_sec <= ss_time_end_sec) // during SS
       {
         getZMPforSS(calc_prev_stp_data, calc_curr_stp_data, calc_next_stp_data,
                     &ss_start_zmp_x_m, &ss_start_zmp_y_m, &ss_end_zmp_x_m, &ss_end_zmp_y_m);
 
-        zmp_moving_ratio = smooth_tra_.getPosition((calc_curr_time_sec - ssp_time_start_sec) / (ssp_time_end_sec - ssp_time_start_sec));
+        zmp_moving_ratio = smooth_tra_.getPosition((calc_curr_time_sec - ss_time_start_sec) / (ss_time_end_sec - ss_time_start_sec));
 
         reference_zmp_x_(ref_zmp_idx, 0) = ss_start_zmp_x_m + (ss_end_zmp_x_m - ss_start_zmp_x_m) * zmp_moving_ratio;
         reference_zmp_y_(ref_zmp_idx, 0) = ss_start_zmp_y_m + (ss_end_zmp_y_m - ss_start_zmp_y_m) * zmp_moving_ratio;
@@ -1042,40 +1042,39 @@ void EndpointCalculator::getZMPforDS(double calc_curr_time_sec,
 {
   if (calc_curr_time_sec < (prev_stp_data->time_data.abs_step_time + curr_stp_data->time_data.step_duration * 0.5)) // first ds: "DS" -> SS -> DS
   {
-    if ((prev_stp_data->position_data.moving_foot == STANDING) && (curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING))
+    if ((prev_stp_data->position_data.moving_foot == STANDING) && (curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING)) // left foot support
     {
       *ds_start_zmp_x_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.left_foot_pose.x);
-      *ds_start_zmp_y_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.left_foot_pose.x);
+      *ds_start_zmp_y_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.y + prev_stp_data->position_data.left_foot_pose.y);
 
       *ds_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x;
-      *ds_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift; 
+      *ds_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift; 
 
       *ds_start_time_sec = prev_stp_data->time_data.abs_step_time;
-      *ds_end_time_sec = curr_stp_data->time_data.dsp_ratio * curr_stp_data->time_data.step_duration * 0.5 + curr_stp_data->time_data.abs_step_time;
+      *ds_end_time_sec   = prev_stp_data->time_data.abs_step_time + (curr_stp_data->time_data.step_duration)*(curr_stp_data->time_data.dsp_ratio)*0.5;
     }
-    else if ((prev_stp_data->position_data.moving_foot == STANDING) && (curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING))
+    else if ((prev_stp_data->position_data.moving_foot == STANDING) && (curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING)) // right foot support
     {
       *ds_start_zmp_x_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.left_foot_pose.x);
-      *ds_start_zmp_y_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.left_foot_pose.x);
+      *ds_start_zmp_y_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.y + prev_stp_data->position_data.left_foot_pose.y);
 
       *ds_end_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x;
       *ds_end_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift; 
 
       *ds_start_time_sec = prev_stp_data->time_data.abs_step_time;
-      *ds_end_time_sec = curr_stp_data->time_data.dsp_ratio * curr_stp_data->time_data.step_duration * 0.5 + curr_stp_data->time_data.abs_step_time;
+      *ds_end_time_sec   = prev_stp_data->time_data.abs_step_time + (curr_stp_data->time_data.step_duration)*(curr_stp_data->time_data.dsp_ratio)*0.5;
     }
     else if ((prev_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING)  && (curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING)) //prev support: left foot 
     {
       // move from left foot forepart medial to right foot aft medial
       *ds_start_zmp_x_m = prev_stp_data->position_data.left_foot_pose.x + prev_stp_data->position_data.x_zmp_shift;
-      *ds_start_zmp_y_m = prev_stp_data->position_data.left_foot_pose.y - prev_stp_data->position_data.y_zmp_shift;
+      *ds_start_zmp_y_m = prev_stp_data->position_data.left_foot_pose.y + prev_stp_data->position_data.y_zmp_shift;
 
       *ds_end_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
       *ds_end_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift; 
 
       *ds_start_time_sec = prev_stp_data->time_data.abs_step_time - (prev_stp_data->time_data.step_duration)*(prev_stp_data->time_data.dsp_ratio)*0.5;
-      *ds_end_time_sec = curr_stp_data->time_data.dsp_ratio * curr_stp_data->time_data.step_duration * 0.5 + prev_stp_data->time_data.abs_step_time;
-
+      *ds_end_time_sec   = prev_stp_data->time_data.abs_step_time + (curr_stp_data->time_data.step_duration)*(curr_stp_data->time_data.dsp_ratio)*0.5;
     }
     else if ((prev_stp_data->position_data.moving_foot == LEFT_FOOT_SWING)  && (curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING)) // prev support: right foot
     {
@@ -1083,19 +1082,19 @@ void EndpointCalculator::getZMPforDS(double calc_curr_time_sec,
       *ds_start_zmp_x_m = prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.x_zmp_shift;
       *ds_start_zmp_y_m = prev_stp_data->position_data.right_foot_pose.y + prev_stp_data->position_data.y_zmp_shift; 
 
-      *ds_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x - prev_stp_data->position_data.x_zmp_shift;
-      *ds_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - prev_stp_data->position_data.y_zmp_shift;
+      *ds_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
+      *ds_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
       *ds_start_time_sec = prev_stp_data->time_data.abs_step_time - (prev_stp_data->time_data.step_duration)*(prev_stp_data->time_data.dsp_ratio)*0.5;
-      *ds_end_time_sec = curr_stp_data->time_data.dsp_ratio * curr_stp_data->time_data.step_duration * 0.5 + prev_stp_data->time_data.abs_step_time;
+      *ds_end_time_sec   = prev_stp_data->time_data.abs_step_time + (curr_stp_data->time_data.step_duration)*(curr_stp_data->time_data.dsp_ratio)*0.5;
     }
     else
     {
       *ds_start_zmp_x_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
-      *ds_start_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
+      *ds_start_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.left_foot_pose.y);
 
       *ds_end_zmp_x_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
-      *ds_end_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
+      *ds_end_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.left_foot_pose.y);
 
       *ds_start_time_sec = prev_stp_data->time_data.abs_step_time;
       *ds_end_time_sec = prev_stp_data->time_data.abs_step_time;
@@ -1106,12 +1105,12 @@ void EndpointCalculator::getZMPforDS(double calc_curr_time_sec,
     if ((curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == STANDING)) // curr support foot: left
     {
       *ds_start_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x;
-      *ds_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift; 
+      *ds_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift; 
 
-      *ds_end_zmp_x_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.left_foot_pose.x);
-      *ds_end_zmp_y_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.left_foot_pose.x);
+      *ds_end_zmp_x_m = 0.5 * (next_stp_data->position_data.right_foot_pose.x + next_stp_data->position_data.left_foot_pose.x);
+      *ds_end_zmp_y_m = 0.5 * (next_stp_data->position_data.right_foot_pose.y + next_stp_data->position_data.left_foot_pose.y);
 
-      *ds_start_time_sec = curr_stp_data->time_data.abs_step_time - curr_stp_data->time_data.step_duration * prev_stp_data->time_data.dsp_ratio * 0.5;
+      *ds_start_time_sec = curr_stp_data->time_data.abs_step_time - curr_stp_data->time_data.step_duration * curr_stp_data->time_data.dsp_ratio * 0.5;
       *ds_end_time_sec = curr_stp_data->time_data.abs_step_time;
     }
     else if ((curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == STANDING)) // curr support foot: right
@@ -1119,23 +1118,23 @@ void EndpointCalculator::getZMPforDS(double calc_curr_time_sec,
       *ds_start_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x;
       *ds_start_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift; 
 
-      *ds_end_zmp_x_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.left_foot_pose.x);
-      *ds_end_zmp_y_m = 0.5 * (prev_stp_data->position_data.right_foot_pose.x + prev_stp_data->position_data.left_foot_pose.x);
+      *ds_end_zmp_x_m = 0.5 * (next_stp_data->position_data.right_foot_pose.x + next_stp_data->position_data.left_foot_pose.x);
+      *ds_end_zmp_y_m = 0.5 * (next_stp_data->position_data.right_foot_pose.y + next_stp_data->position_data.left_foot_pose.y);
 
-      *ds_start_time_sec = curr_stp_data->time_data.abs_step_time - curr_stp_data->time_data.step_duration * prev_stp_data->time_data.dsp_ratio * 0.5;
+      *ds_start_time_sec = curr_stp_data->time_data.abs_step_time - curr_stp_data->time_data.step_duration * curr_stp_data->time_data.dsp_ratio * 0.5;
       *ds_end_time_sec = curr_stp_data->time_data.abs_step_time;
     }
     else if ((curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == LEFT_FOOT_SWING))
     {
       // move from left foot forepart medial to right foot aft medial
       *ds_start_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
-      *ds_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift;
+      *ds_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
       *ds_end_zmp_x_m = next_stp_data->position_data.right_foot_pose.x - next_stp_data->position_data.x_zmp_shift;
       *ds_end_zmp_y_m = next_stp_data->position_data.right_foot_pose.y + next_stp_data->position_data.y_zmp_shift; 
 
       *ds_start_time_sec = curr_stp_data->time_data.abs_step_time - (curr_stp_data->time_data.step_duration) * (curr_stp_data->time_data.dsp_ratio) * 0.5;
-      *ds_end_time_sec = next_stp_data->time_data.abs_step_time + (curr_stp_data->time_data.dsp_ratio) * (curr_stp_data->time_data.step_duration) * 0.5;
+      *ds_end_time_sec = curr_stp_data->time_data.abs_step_time + (next_stp_data->time_data.dsp_ratio) * (next_stp_data->time_data.step_duration) * 0.5;
     }
     else if ((curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING))
     {
@@ -1144,18 +1143,18 @@ void EndpointCalculator::getZMPforDS(double calc_curr_time_sec,
       *ds_start_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
       *ds_end_zmp_x_m = next_stp_data->position_data.left_foot_pose.x - next_stp_data->position_data.x_zmp_shift;
-      *ds_end_zmp_y_m = next_stp_data->position_data.left_foot_pose.y - next_stp_data->position_data.y_zmp_shift; 
+      *ds_end_zmp_y_m = next_stp_data->position_data.left_foot_pose.y + next_stp_data->position_data.y_zmp_shift; 
 
       *ds_start_time_sec = curr_stp_data->time_data.abs_step_time - (curr_stp_data->time_data.step_duration) * (curr_stp_data->time_data.dsp_ratio) * 0.5;
-      *ds_end_time_sec = next_stp_data->time_data.abs_step_time + (curr_stp_data->time_data.dsp_ratio) * (curr_stp_data->time_data.step_duration) * 0.5;
+      *ds_end_time_sec = curr_stp_data->time_data.abs_step_time + (next_stp_data->time_data.dsp_ratio) * (next_stp_data->time_data.step_duration) * 0.5;
     }
     else 
     {
       *ds_start_zmp_x_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
-      *ds_start_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
+      *ds_start_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.left_foot_pose.y);
 
       *ds_end_zmp_x_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
-      *ds_end_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
+      *ds_end_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.left_foot_pose.y);
 
       *ds_start_time_sec = prev_stp_data->time_data.abs_step_time;
       *ds_end_time_sec = prev_stp_data->time_data.abs_step_time;
@@ -1167,66 +1166,68 @@ void EndpointCalculator::getZMPforDS(double calc_curr_time_sec,
 void EndpointCalculator::getZMPforSS(robotis_framework::StepData* prev_stp_data, robotis_framework::StepData* curr_stp_data, robotis_framework::StepData* next_stp_data, 
                                      double* ss_start_zmp_x_m, double* ss_start_zmp_y_m, double* ss_end_zmp_x_m,   double* ss_end_zmp_y_m)
 {
-  if ((prev_stp_data->position_data.moving_foot == STANDING) && (curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING))
+  if (next_stp_data != 0)
   {
-    *ss_start_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x;
-    *ss_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift;
+    if ((prev_stp_data->position_data.moving_foot == STANDING) && (curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING))
+    {
+      *ss_start_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x;
+      *ss_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
-    *ss_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
-    *ss_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift;
-  }
-  else if ((prev_stp_data->position_data.moving_foot == STANDING) && (curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING))
-  {
-    *ss_start_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x;
-    *ss_start_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+      *ss_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
+      *ss_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+    }
+    else if ((prev_stp_data->position_data.moving_foot == STANDING) && (curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING))
+    {
+      *ss_start_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x;
+      *ss_start_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
-    *ss_end_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
-    *ss_end_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
-  }
-  else if ((prev_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING) && (curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING)) // prev support: left foot
-  {
-    // move from right foot aft medial to right foot forepart medial 
-    *ss_start_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
-    *ss_start_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+      *ss_end_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
+      *ss_end_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+    }
+    else if ((curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING)) // curr support: right foot
+    {
+      // move from right foot aft medial to right foot forepart medial
+      *ss_start_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
+      *ss_start_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
-    *ss_end_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
-    *ss_end_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
-  }
-  else if ((prev_stp_data->position_data.moving_foot == LEFT_FOOT_SWING) && (curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING)) // prev support: right foot
-  {
-    // move from left foot aft medial to left foot forepart medial 
-    *ss_start_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
-    *ss_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift;
+      *ss_end_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
+      *ss_end_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+    }
+    else if ((curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == LEFT_FOOT_SWING)) // prev support: left foot
+    {
+      // move from left foot aft medial to left foot forepart medial
+      *ss_start_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
+      *ss_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
-    *ss_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
-    *ss_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift;
-  }
-  else if ((curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == STANDING)) // curr support foot: left
-  {
-    // move from left foot aft medial to left foot center medial 
-    *ss_start_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
-    *ss_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift;
+      *ss_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x + curr_stp_data->position_data.x_zmp_shift;
+      *ss_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+    }
+    else if ((curr_stp_data->position_data.moving_foot == RIGHT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == STANDING)) // curr support foot: left
+    {
+      // move from left foot aft medial to left foot center medial
+      *ss_start_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
+      *ss_start_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
-    *ss_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x;
-    *ss_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y - curr_stp_data->position_data.y_zmp_shift;
-  }
-  else if ((curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == STANDING)) // curr support foot: right
-  {
-    // move from right foot aft medial to right foot center medial 
-    *ss_start_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
-    *ss_start_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+      *ss_end_zmp_x_m = curr_stp_data->position_data.left_foot_pose.x;
+      *ss_end_zmp_y_m = curr_stp_data->position_data.left_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+    }
+    else if ((curr_stp_data->position_data.moving_foot == LEFT_FOOT_SWING) && (next_stp_data->position_data.moving_foot == STANDING)) // curr support foot: right
+    {
+      // move from right foot aft medial to right foot center medial
+      *ss_start_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x - curr_stp_data->position_data.x_zmp_shift;
+      *ss_start_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
 
-    *ss_end_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x;
-    *ss_end_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+      *ss_end_zmp_x_m = curr_stp_data->position_data.right_foot_pose.x;
+      *ss_end_zmp_y_m = curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.y_zmp_shift;
+    }
   }
   else
   {
-    // impossible to be here but just in case
     *ss_start_zmp_x_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
-    *ss_start_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
+    *ss_start_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.left_foot_pose.y);
 
     *ss_end_zmp_x_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
-    *ss_end_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.x + curr_stp_data->position_data.left_foot_pose.x);
+    *ss_end_zmp_y_m = 0.5 * (curr_stp_data->position_data.right_foot_pose.y + curr_stp_data->position_data.left_foot_pose.y);
   }
 }
 
@@ -1544,7 +1545,11 @@ void EndpointCalculator::calcDesiredPose()
   x_lipm_ = xy_calculator_.x_lipm_;
   y_lipm_ = xy_calculator_.y_lipm_;
 
-  //std::cout << reference_zmp_x_.coeff(0,0) << " " << reference_zmp_y_.coeff(0,0) << " " << present_body_pose_ << " " << present_right_foot_pose_ << " " << present_left_foot_pose_ <<" ";//<< std::endl;
+  std::cout << x_lipm_(0,0) << " " << y_lipm_(0,0) << " " << reference_zmp_x_.coeff(0,0) << " " << reference_zmp_y_.coeff(0,0) << " " 
+  << present_body_pose_.x       << " " << present_body_pose_.y       << " " << present_body_pose_.z       << " " << present_body_pose_.roll       << " " << present_body_pose_.pitch       << " " << present_body_pose_.yaw       << " " 
+  << present_right_foot_pose_.x << " " << present_right_foot_pose_.y << " " << present_right_foot_pose_.z << " " << present_right_foot_pose_.roll << " " << present_right_foot_pose_.pitch << " " << present_right_foot_pose_.yaw << " " 
+  << present_left_foot_pose_.x  << " " << present_left_foot_pose_.y  << " " << present_left_foot_pose_.z  << " " << present_left_foot_pose_.roll  << " " << present_left_foot_pose_.pitch  << " " << present_left_foot_pose_.yaw  << " " 
+  << std::endl;
 
   //std::cout << switching_ratio_ << std::endl;
 }
@@ -1559,7 +1564,7 @@ bool EndpointCalculator::isRunning()
   return running;
 }
 
-  void EndpointCalculator::setZMPmode(uint8_t mode)
-  {
-    mode_ = mode;
-  }
+void EndpointCalculator::setZMPmode(uint8_t mode)
+{
+  mode_ = mode;
+}
