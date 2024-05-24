@@ -316,12 +316,15 @@ void PreviewWalking::setCurrentIMUSensorOutput(double gyro_x, double gyro_y, dou
   current_gyro_roll_rad_per_sec_  = gyro_x;
   current_gyro_pitch_rad_per_sec_ = gyro_y;
 
-  quat_current_imu_ = Eigen::Quaterniond(quat_w, quat_x, quat_y, quat_z);
+  quat_current_imu_.x() = quat_x;
+  quat_current_imu_.y() = quat_y;
+  quat_current_imu_.z() = quat_z;
+  quat_current_imu_.w() = quat_w;
 
-  mat_current_imu_ = (mat_imu_frame_ref_ * quat_current_imu_.toRotationMatrix()) * mat_imu_frame_ref_inv_;
+  //mat_current_imu_ = (mat_imu_frame_ref_ * quat_current_imu_.toRotationMatrix()) * mat_imu_frame_ref_inv_;
 
-  current_imu_roll_rad_  = atan2( mat_current_imu_.coeff(2,1), mat_current_imu_.coeff(2,2));
-  current_imu_pitch_rad_ = atan2(-mat_current_imu_.coeff(2,0), sqrt(robotis_framework::powDI(mat_current_imu_.coeff(2,1), 2) + robotis_framework::powDI(mat_current_imu_.coeff(2,2), 2)));
+  //current_imu_roll_rad_  = atan2( mat_current_imu_.coeff(2,1), mat_current_imu_.coeff(2,2));
+  //current_imu_pitch_rad_ = atan2(-mat_current_imu_.coeff(2,0), sqrt(robotis_framework::powDI(mat_current_imu_.coeff(2,1), 2) + robotis_framework::powDI(mat_current_imu_.coeff(2,2), 2)));
 
   //std::cout << "gx : " << current_gyro_roll_rad_per_sec_ << " gy : " << current_gyro_pitch_rad_per_sec_
       //<< " x : " << current_imu_roll_rad_ << " y : " << current_imu_pitch_rad_ << std::endl;

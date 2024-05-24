@@ -54,6 +54,9 @@ public:
   void setLIPMHeight(double height_m);
   void setInitialPose(robotis_framework::Pose3D r_foot, robotis_framework::Pose3D l_foot, robotis_framework::Pose3D pelvis);
 
+  sensor_msgs::Imu imu_data_;
+  geometry_msgs::Vector3 com_pos_;
+
 private:
   void publishRobotPose(void);
   void publishStatusMsg(unsigned int type, std::string msg);
@@ -61,7 +64,8 @@ private:
   void publishWalkingTuningData();
 
   /* ROS Topic Callback Functions */
-  //void imuDataOutputCallback(const sensor_msgs::Imu::ConstPtr &msg);
+  void imuDataOutputCallback(const sensor_msgs::Imu::ConstPtr &msg);
+  void comDataCallback(const geometry_msgs::Vector3::ConstPtr &msg);
   //void ftDataOutputCallback(const diana_msgs::ForceTorque::ConstPtr &msg);
 
   /* ROS Service Callback Functions */

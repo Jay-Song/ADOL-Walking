@@ -24,6 +24,9 @@ int main(int argc, char **argv)
 
   std::string cmd;
 
+  double step_length_m = 0.15;//0.05; 0.1; 0.17;
+  double step_time_sec = 0.5;
+
   while(ros::ok())
   {
     std::cout << "[CMD]: " ;
@@ -50,12 +53,34 @@ int main(int argc, char **argv)
       adol_foot_step_generator::FootStepCommand cmd_msg;
       cmd_msg.command = "forward";
       cmd_msg.step_num = 3;
-      cmd_msg.step_time = 0.6;
-      cmd_msg.step_length = 0.1;
+      cmd_msg.step_time = step_time_sec;
+      cmd_msg.step_length = step_length_m;
       cmd_msg.side_step_length = 0;
       cmd_msg.step_angle_rad = 0.0;
 
+      std::cout << cmd_msg << std::endl;
+
       walking_cmd_pub_.publish(cmd_msg);
+    }
+    else if (cmd == "slu")
+    {
+      step_length_m += 0.01;
+      std::cout << "step_length_m: " << step_length_m << std::endl;
+    }
+    else if (cmd == "sld")
+    {
+      step_length_m -= 0.01;
+      std::cout << "step_length_m: " << step_length_m << std::endl;
+    }
+    else if (cmd == "stu")
+    {
+      step_time_sec += 0.01;
+      std::cout << "step_time_sec: " << step_time_sec << std::endl;
+    }
+    else if (cmd == "std")
+    {
+      step_time_sec -= 0.01;
+      std::cout << "step_time_sec: " << step_time_sec << std::endl;
     }
 
     ros::spinOnce();

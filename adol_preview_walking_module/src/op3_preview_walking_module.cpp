@@ -177,7 +177,6 @@ void OP3PreviewWalkingModule::queueThread()
   done_msg_pub_ = ros_node.advertise<std_msgs::String>("/adol/op3/movement_done", 1);
   walking_joint_states_pub_ = ros_node.advertise<adol_preview_walking_module_msgs::WalkingJointStatesStamped>("/adol/op3/walking_joint_states", 1);
 
-
   /* ROS Service Callback Functions */
   ros::ServiceServer get_ref_step_data_server  = ros_node.advertiseService("/adol/preview_walking/get_reference_step_data",   &OP3PreviewWalkingModule::getReferenceStepDataServiceCallback,   this);
   ros::ServiceServer add_step_data_array_sever = ros_node.advertiseService("/adol/preview_walking/add_step_data",             &OP3PreviewWalkingModule::addStepDataServiceCallback,            this);
@@ -188,12 +187,19 @@ void OP3PreviewWalkingModule::queueThread()
   ros::ServiceServer remove_existing_step_data = ros_node.advertiseService("/adol/preview_walking/remove_existing_step_data", &OP3PreviewWalkingModule::removeExistingStepDataServiceCallback, this);
 
   /* sensor topic subscribe */
-  //ros::Subscriber imu_data_sub = ros_node.subscribe("/imu/data", 3, &OP3PreviewWalkingModule::imuDataOutputCallback,        this);
+  ros::Subscriber imu_data_sub; 
+  ros::Subscriber com_data_sub;
   //ros::Subscriber ft_data_sub  = ros_node.subscribe("/alice/force_torque_data", 3, &OP3PreviewWalkingModule::ftDataOutputCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   if(ros::param::get("gazebo", gazebo_) == false)
     gazebo_ = false;
+
+  if (gazebo_ == true)
+  {
+    imu_data_sub = ros_node.subscribe("/adol/op3/webots/imu", 3, &OP3PreviewWalkingModule::imuDataOutputCallback, this);
+    com_data_sub = ros_node.subscribe("/adol/op3/webots/com", 3, &OP3PreviewWalkingModule::comDataCallback,       this);
+  }
 
   while(ros_node.ok())
     callback_queue.callAvailable(duration);
@@ -309,7 +315,6 @@ int OP3PreviewWalkingModule::convertStepDataMsgToStepData(adol_preview_walking_m
 
   return copy_result;
 }
-
 
 int OP3PreviewWalkingModule::convertStepDataToStepDataMsg(robotis_framework::StepData& src, adol_preview_walking_module_msgs::StepData& des)
 {
@@ -637,7 +642,6 @@ void OP3PreviewWalkingModule::updateJointFeedBackGain()
 {
   double current_update_gain =  joint_feedback_update_tra_.getPosition(joint_feedback_update_sys_time_);
 
-
   current_joint_feedback_gain_.r_leg_hip_y_p_gain = current_update_gain*(desired_joint_feedback_gain_.r_leg_hip_y_p_gain - previous_joint_feedback_gain_.r_leg_hip_y_p_gain ) + previous_joint_feedback_gain_.r_leg_hip_y_p_gain  ;
   current_joint_feedback_gain_.r_leg_hip_y_d_gain = current_update_gain*(desired_joint_feedback_gain_.r_leg_hip_y_d_gain - previous_joint_feedback_gain_.r_leg_hip_y_d_gain ) + previous_joint_feedback_gain_.r_leg_hip_y_d_gain  ;
   current_joint_feedback_gain_.r_leg_hip_r_p_gain = current_update_gain*(desired_joint_feedback_gain_.r_leg_hip_r_p_gain - previous_joint_feedback_gain_.r_leg_hip_r_p_gain ) + previous_joint_feedback_gain_.r_leg_hip_r_p_gain  ;
@@ -922,15 +926,6 @@ bool OP3PreviewWalkingModule::checkBalanceOnOff()
   //   return true;
 }
 
-// void OP3PreviewWalkingModule::imuDataOutputCallback(const sensor_msgs::Imu::ConstPtr &msg)
-// {
-//   ALICEOnlineWalking *online_walking = ALICEOnlineWalking::getInstance();
-
-//   online_walking->setCurrentIMUSensorOutput((msg->angular_velocity.y), (msg->angular_velocity.x),
-//                                             msg->orientation.x, msg->orientation.y, msg->orientation.z,
-//                                             msg->orientation.w);
-// }
-
 // void OP3PreviewWalkingModule::ftDataOutputCallback(const diana_msgs::ForceTorque::ConstPtr &msg)
 // {
 //   ALICEOnlineWalking *online_walking = ALICEOnlineWalking::getInstance();
@@ -1096,17 +1091,48 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
 //  online_walking->current_left_tx_Nm_ = l_foot_Tx_Nm_;
 //  online_walking->current_left_ty_Nm_ = l_foot_Ty_Nm_;
 //  online_walking->current_left_tz_Nm_ = l_foot_Tz_Nm_;
-
-
+  
+  // getting present values
   for(std::map<std::string, robotis_framework::DynamixelState*>::iterator result_it = result_.begin();
       result_it != result_.end();
       result_it++)
   {
     std::map<std::string, robotis_framework::Dynamixel*>::iterator dxls_it = dxls.find(result_it->first);
     if(dxls_it != dxls.end())
+    {
       prev_walking_->curr_angle_rad_[joint_name_to_index_[result_it->first]] = dxls_it->second->dxl_state_->present_position_;
+
+      if (gazebo_)
+        prev_walking_->curr_torque_Nm_[joint_name_to_index_[result_it->first]] = dxls_it->second->dxl_state_->present_torque_; // for simulation
+    }
   }
 
+  if (gazebo_ == false)
+  {
+    // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["r_sho_pitch"]->dxl_state_->bulk_read_table_["present_current"];
+    // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["r_sho_roll"]->dxl_state_->bulk_read_table_["present_current"] ;
+    // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["r_el"]->dxl_state_->bulk_read_table_["present_current"]       ;
+    // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["l_sho_pitch"]->dxl_state_->bulk_read_table_["present_current"];
+    // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["l_sho_roll"]->dxl_state_->bulk_read_table_["present_current"] ;
+    // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["l_el"]->dxl_state_->bulk_read_table_["present_current"]       ;
+    prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["r_hip_yaw"]->dxl_state_->bulk_read_table_["present_current"]  ;
+    prev_walking_->curr_torque_Nm_[1] = (int16_t) dxls["r_hip_roll"]->dxl_state_->bulk_read_table_["present_current"] ;
+    prev_walking_->curr_torque_Nm_[2] = (int16_t) dxls["r_hip_pitch"]->dxl_state_->bulk_read_table_["present_current"];
+    prev_walking_->curr_torque_Nm_[3] = (int16_t) dxls["r_knee"]->dxl_state_->bulk_read_table_["present_current"]     ;
+    prev_walking_->curr_torque_Nm_[4] = (int16_t) dxls["r_ank_pitch"]->dxl_state_->bulk_read_table_["present_current"];
+    prev_walking_->curr_torque_Nm_[5] = (int16_t) dxls["r_ank_roll"]->dxl_state_->bulk_read_table_["present_current"] ;
+    prev_walking_->curr_torque_Nm_[6] = (int16_t) dxls["l_hip_yaw"]->dxl_state_->bulk_read_table_["present_current"]  ;
+    prev_walking_->curr_torque_Nm_[7] = (int16_t) dxls["l_hip_roll"]->dxl_state_->bulk_read_table_["present_current"] ;
+    prev_walking_->curr_torque_Nm_[8] = (int16_t) dxls["l_hip_pitch"]->dxl_state_->bulk_read_table_["present_current"];
+    prev_walking_->curr_torque_Nm_[9] = (int16_t) dxls["l_knee"]->dxl_state_->bulk_read_table_["present_current"]     ;
+    prev_walking_->curr_torque_Nm_[10] = (int16_t) dxls["l_ank_pitch"]->dxl_state_->bulk_read_table_["present_current"];
+    prev_walking_->curr_torque_Nm_[11] = (int16_t) dxls["l_ank_roll"]->dxl_state_->bulk_read_table_["present_current"] ;
+    // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["head_pan"]->dxl_state_->bulk_read_table_["present_current"]   ;
+    // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["head_tilt"]->dxl_state_->bulk_read_table_["present_current"]  ;
+  }
+  
+  
+  // preview control walking
   process_mutex_.lock();
   prev_walking_->process();
 
@@ -1158,6 +1184,29 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
 //  walking_joint_states_msg_.l_present_an_r  = online_walking->curr_angle_rad_[11];
 //  walking_joint_states_pub_.publish(walking_joint_states_msg_);
 
+  std::cout << prev_walking_->walking_pattern_.current_balancing_index_ << " " <<  prev_walking_->walking_pattern_.x_lipm_(0,0) << " " << prev_walking_->walking_pattern_.y_lipm_(0,0) << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_x_.coeff(0,0) << " " << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_y_.coeff(0,0) << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.x          << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.y           << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.z << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.roll       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.pitch       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.yaw << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.x    << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.y     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.z << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.roll << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.pitch << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.yaw << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.x     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.y      << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.z  << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.roll  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.pitch  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.yaw  << " " 
+  << prev_walking_->out_angle_rad_[0] << " " << prev_walking_->out_angle_rad_[1] << " " << prev_walking_->out_angle_rad_[2] << " " 
+  << prev_walking_->out_angle_rad_[3] << " " << prev_walking_->out_angle_rad_[4] << " " << prev_walking_->out_angle_rad_[5] << " " 
+  << prev_walking_->out_angle_rad_[6] << " " << prev_walking_->out_angle_rad_[7] << " " << prev_walking_->out_angle_rad_[8] << " " 
+  << prev_walking_->out_angle_rad_[9] << " " << prev_walking_->out_angle_rad_[10] << " " << prev_walking_->out_angle_rad_[11] << " " 
+  << prev_walking_->curr_angle_rad_[0] << " " << prev_walking_->curr_angle_rad_[1] << " " << prev_walking_->curr_angle_rad_[2] << " " 
+  << prev_walking_->curr_angle_rad_[3] << " " << prev_walking_->curr_angle_rad_[4] << " " << prev_walking_->curr_angle_rad_[5] << " " 
+  << prev_walking_->curr_angle_rad_[6] << " " << prev_walking_->curr_angle_rad_[7] << " " << prev_walking_->curr_angle_rad_[8] << " " 
+  << prev_walking_->curr_angle_rad_[9] << " " << prev_walking_->curr_angle_rad_[10] << " " << prev_walking_->curr_angle_rad_[11] << " " 
+  << prev_walking_->curr_torque_Nm_[0] << " " << prev_walking_->curr_torque_Nm_[1] << " " << prev_walking_->curr_torque_Nm_[2] << " " 
+  << prev_walking_->curr_torque_Nm_[3] << " " << prev_walking_->curr_torque_Nm_[4] << " " << prev_walking_->curr_torque_Nm_[5] << " " 
+  << prev_walking_->curr_torque_Nm_[6] << " " << prev_walking_->curr_torque_Nm_[7] << " " << prev_walking_->curr_torque_Nm_[8] << " " 
+  << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " 
+  << imu_data_.orientation.x << " " << imu_data_.orientation.y << " " << imu_data_.orientation.z << " " << imu_data_.orientation.w << " "
+  << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "
+  << std::endl;
 
   present_running = isRunning();
   if(previous_running_ != present_running)
@@ -1183,4 +1232,21 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
 void OP3PreviewWalkingModule::stop()
 {
   return;
+}
+
+void OP3PreviewWalkingModule::imuDataOutputCallback(const sensor_msgs::Imu::ConstPtr &msg)
+{
+  //   ALICEOnlineWalking *online_walking = ALICEOnlineWalking::getInstance();
+
+//   online_walking->setCurrentIMUSensorOutput((msg->angular_velocity.y), (msg->angular_velocity.x),
+//                                             msg->orientation.x, msg->orientation.y, msg->orientation.z,
+//                                             msg->orientation.w);
+
+  prev_walking_->setCurrentIMUSensorOutput(msg->angular_velocity.x, msg->angular_velocity.y, msg->orientation.x, msg->orientation.y, msg->orientation.z, msg->orientation.w);
+  imu_data_ = *msg;
+}
+
+void OP3PreviewWalkingModule::comDataCallback(const geometry_msgs::Vector3::ConstPtr &msg)
+{
+  com_pos_ = *msg;
 }

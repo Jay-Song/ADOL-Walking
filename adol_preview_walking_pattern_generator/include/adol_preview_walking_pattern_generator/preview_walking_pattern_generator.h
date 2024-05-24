@@ -48,7 +48,7 @@ public:
 
   Eigen::Vector3d x_lipm_, y_lipm_;
 
-private:
+//private:
   EndpointCalculator ep_calculator_;
 
 };

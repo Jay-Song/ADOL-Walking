@@ -1545,12 +1545,6 @@ void EndpointCalculator::calcDesiredPose()
   x_lipm_ = xy_calculator_.x_lipm_;
   y_lipm_ = xy_calculator_.y_lipm_;
 
-  std::cout << x_lipm_(0,0) << " " << y_lipm_(0,0) << " " << reference_zmp_x_.coeff(0,0) << " " << reference_zmp_y_.coeff(0,0) << " " 
-  << present_body_pose_.x       << " " << present_body_pose_.y       << " " << present_body_pose_.z       << " " << present_body_pose_.roll       << " " << present_body_pose_.pitch       << " " << present_body_pose_.yaw       << " " 
-  << present_right_foot_pose_.x << " " << present_right_foot_pose_.y << " " << present_right_foot_pose_.z << " " << present_right_foot_pose_.roll << " " << present_right_foot_pose_.pitch << " " << present_right_foot_pose_.yaw << " " 
-  << present_left_foot_pose_.x  << " " << present_left_foot_pose_.y  << " " << present_left_foot_pose_.z  << " " << present_left_foot_pose_.roll  << " " << present_left_foot_pose_.pitch  << " " << present_left_foot_pose_.yaw  << " " 
-  << std::endl;
-
   //std::cout << switching_ratio_ << std::endl;
 }
 
