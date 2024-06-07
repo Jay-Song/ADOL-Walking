@@ -576,31 +576,31 @@ bool OP3PreviewWalkingModule::setJointFeedBackGainServiceCallback(adol_preview_w
 
   desired_joint_feedback_gain_ = req.feedback_gain;
 
-  // previous_joint_feedback_gain_.r_leg_hip_y_p_gain = prev_walking_->leg_angle_feed_back_[0].p_gain_;
-  // previous_joint_feedback_gain_.r_leg_hip_y_d_gain = prev_walking_->leg_angle_feed_back_[0].d_gain_;
-  // previous_joint_feedback_gain_.r_leg_hip_r_p_gain = prev_walking_->leg_angle_feed_back_[1].p_gain_;
-  // previous_joint_feedback_gain_.r_leg_hip_r_d_gain = prev_walking_->leg_angle_feed_back_[1].d_gain_;
-  // previous_joint_feedback_gain_.r_leg_hip_p_p_gain = prev_walking_->leg_angle_feed_back_[2].p_gain_;
-  // previous_joint_feedback_gain_.r_leg_hip_p_d_gain = prev_walking_->leg_angle_feed_back_[2].d_gain_;
-  // previous_joint_feedback_gain_.r_leg_kn_p_p_gain  = prev_walking_->leg_angle_feed_back_[3].p_gain_;
-  // previous_joint_feedback_gain_.r_leg_kn_p_d_gain  = prev_walking_->leg_angle_feed_back_[3].d_gain_;
-  // previous_joint_feedback_gain_.r_leg_an_p_p_gain  = prev_walking_->leg_angle_feed_back_[4].p_gain_;
-  // previous_joint_feedback_gain_.r_leg_an_p_d_gain  = prev_walking_->leg_angle_feed_back_[4].d_gain_;
-  // previous_joint_feedback_gain_.r_leg_an_r_p_gain  = prev_walking_->leg_angle_feed_back_[5].p_gain_;
-  // previous_joint_feedback_gain_.r_leg_an_r_d_gain  = prev_walking_->leg_angle_feed_back_[5].d_gain_;
+  previous_joint_feedback_gain_.r_leg_hip_y_p_gain = prev_walking_->leg_angle_feed_back_[0].p_gain_;
+  previous_joint_feedback_gain_.r_leg_hip_y_d_gain = prev_walking_->leg_angle_feed_back_[0].d_gain_;
+  previous_joint_feedback_gain_.r_leg_hip_r_p_gain = prev_walking_->leg_angle_feed_back_[1].p_gain_;
+  previous_joint_feedback_gain_.r_leg_hip_r_d_gain = prev_walking_->leg_angle_feed_back_[1].d_gain_;
+  previous_joint_feedback_gain_.r_leg_hip_p_p_gain = prev_walking_->leg_angle_feed_back_[2].p_gain_;
+  previous_joint_feedback_gain_.r_leg_hip_p_d_gain = prev_walking_->leg_angle_feed_back_[2].d_gain_;
+  previous_joint_feedback_gain_.r_leg_kn_p_p_gain  = prev_walking_->leg_angle_feed_back_[3].p_gain_;
+  previous_joint_feedback_gain_.r_leg_kn_p_d_gain  = prev_walking_->leg_angle_feed_back_[3].d_gain_;
+  previous_joint_feedback_gain_.r_leg_an_p_p_gain  = prev_walking_->leg_angle_feed_back_[4].p_gain_;
+  previous_joint_feedback_gain_.r_leg_an_p_d_gain  = prev_walking_->leg_angle_feed_back_[4].d_gain_;
+  previous_joint_feedback_gain_.r_leg_an_r_p_gain  = prev_walking_->leg_angle_feed_back_[5].p_gain_;
+  previous_joint_feedback_gain_.r_leg_an_r_d_gain  = prev_walking_->leg_angle_feed_back_[5].d_gain_;
 
-  // previous_joint_feedback_gain_.l_leg_hip_y_p_gain = prev_walking_->leg_angle_feed_back_[6].p_gain_;
-  // previous_joint_feedback_gain_.l_leg_hip_y_d_gain = prev_walking_->leg_angle_feed_back_[6].d_gain_;
-  // previous_joint_feedback_gain_.l_leg_hip_r_p_gain = prev_walking_->leg_angle_feed_back_[7].p_gain_;
-  // previous_joint_feedback_gain_.l_leg_hip_r_d_gain = prev_walking_->leg_angle_feed_back_[7].d_gain_;
-  // previous_joint_feedback_gain_.l_leg_hip_p_p_gain = prev_walking_->leg_angle_feed_back_[8].p_gain_;
-  // previous_joint_feedback_gain_.l_leg_hip_p_d_gain = prev_walking_->leg_angle_feed_back_[8].d_gain_;
-  // previous_joint_feedback_gain_.l_leg_kn_p_p_gain  = prev_walking_->leg_angle_feed_back_[9].p_gain_;
-  // previous_joint_feedback_gain_.l_leg_kn_p_d_gain  = prev_walking_->leg_angle_feed_back_[9].d_gain_;
-  // previous_joint_feedback_gain_.l_leg_an_p_p_gain  = prev_walking_->leg_angle_feed_back_[10].p_gain_;
-  // previous_joint_feedback_gain_.l_leg_an_p_d_gain  = prev_walking_->leg_angle_feed_back_[10].d_gain_;
-  // previous_joint_feedback_gain_.l_leg_an_r_p_gain  = prev_walking_->leg_angle_feed_back_[11].p_gain_;
-  // previous_joint_feedback_gain_.l_leg_an_r_d_gain  = prev_walking_->leg_angle_feed_back_[11].d_gain_;
+  previous_joint_feedback_gain_.l_leg_hip_y_p_gain = prev_walking_->leg_angle_feed_back_[6].p_gain_;
+  previous_joint_feedback_gain_.l_leg_hip_y_d_gain = prev_walking_->leg_angle_feed_back_[6].d_gain_;
+  previous_joint_feedback_gain_.l_leg_hip_r_p_gain = prev_walking_->leg_angle_feed_back_[7].p_gain_;
+  previous_joint_feedback_gain_.l_leg_hip_r_d_gain = prev_walking_->leg_angle_feed_back_[7].d_gain_;
+  previous_joint_feedback_gain_.l_leg_hip_p_p_gain = prev_walking_->leg_angle_feed_back_[8].p_gain_;
+  previous_joint_feedback_gain_.l_leg_hip_p_d_gain = prev_walking_->leg_angle_feed_back_[8].d_gain_;
+  previous_joint_feedback_gain_.l_leg_kn_p_p_gain  = prev_walking_->leg_angle_feed_back_[9].p_gain_;
+  previous_joint_feedback_gain_.l_leg_kn_p_d_gain  = prev_walking_->leg_angle_feed_back_[9].d_gain_;
+  previous_joint_feedback_gain_.l_leg_an_p_p_gain  = prev_walking_->leg_angle_feed_back_[10].p_gain_;
+  previous_joint_feedback_gain_.l_leg_an_p_d_gain  = prev_walking_->leg_angle_feed_back_[10].d_gain_;
+  previous_joint_feedback_gain_.l_leg_an_r_p_gain  = prev_walking_->leg_angle_feed_back_[11].p_gain_;
+  previous_joint_feedback_gain_.l_leg_an_r_d_gain  = prev_walking_->leg_angle_feed_back_[11].d_gain_;
 
   joint_feedback_update_with_loop_ = true;
   joint_feedback_update_sys_time_  = 0.0;
@@ -610,33 +610,32 @@ bool OP3PreviewWalkingModule::setJointFeedBackGainServiceCallback(adol_preview_w
 
 void OP3PreviewWalkingModule::setJointFeedBackGain(adol_preview_walking_module_msgs::JointFeedBackGain& msg)
 {
-  // prev_walking_->leg_angle_feed_back_[0].p_gain_  = msg.r_leg_hip_y_p_gain ;
-  // prev_walking_->leg_angle_feed_back_[0].d_gain_  = msg.r_leg_hip_y_d_gain ;
-  // prev_walking_->leg_angle_feed_back_[1].p_gain_  = msg.r_leg_hip_r_p_gain ;
-  // prev_walking_->leg_angle_feed_back_[1].d_gain_  = msg.r_leg_hip_r_d_gain ;
-  // prev_walking_->leg_angle_feed_back_[2].p_gain_  = msg.r_leg_hip_p_p_gain ;
-  // prev_walking_->leg_angle_feed_back_[2].d_gain_  = msg.r_leg_hip_p_d_gain ;
-  // prev_walking_->leg_angle_feed_back_[3].p_gain_  = msg.r_leg_kn_p_p_gain  ;
-  // prev_walking_->leg_angle_feed_back_[3].d_gain_  = msg.r_leg_kn_p_d_gain  ;
-  // prev_walking_->leg_angle_feed_back_[4].p_gain_  = msg.r_leg_an_p_p_gain  ;
-  // prev_walking_->leg_angle_feed_back_[4].d_gain_  = msg.r_leg_an_p_d_gain  ;
-  // prev_walking_->leg_angle_feed_back_[5].p_gain_  = msg.r_leg_an_r_p_gain  ;
-  // prev_walking_->leg_angle_feed_back_[5].d_gain_  = msg.r_leg_an_r_d_gain  ;
+  prev_walking_->leg_angle_feed_back_[0].p_gain_  = msg.r_leg_hip_y_p_gain ;
+  prev_walking_->leg_angle_feed_back_[0].d_gain_  = msg.r_leg_hip_y_d_gain ;
+  prev_walking_->leg_angle_feed_back_[1].p_gain_  = msg.r_leg_hip_r_p_gain ;
+  prev_walking_->leg_angle_feed_back_[1].d_gain_  = msg.r_leg_hip_r_d_gain ;
+  prev_walking_->leg_angle_feed_back_[2].p_gain_  = msg.r_leg_hip_p_p_gain ;
+  prev_walking_->leg_angle_feed_back_[2].d_gain_  = msg.r_leg_hip_p_d_gain ;
+  prev_walking_->leg_angle_feed_back_[3].p_gain_  = msg.r_leg_kn_p_p_gain  ;
+  prev_walking_->leg_angle_feed_back_[3].d_gain_  = msg.r_leg_kn_p_d_gain  ;
+  prev_walking_->leg_angle_feed_back_[4].p_gain_  = msg.r_leg_an_p_p_gain  ;
+  prev_walking_->leg_angle_feed_back_[4].d_gain_  = msg.r_leg_an_p_d_gain  ;
+  prev_walking_->leg_angle_feed_back_[5].p_gain_  = msg.r_leg_an_r_p_gain  ;
+  prev_walking_->leg_angle_feed_back_[5].d_gain_  = msg.r_leg_an_r_d_gain  ;
 
-  // prev_walking_->leg_angle_feed_back_[6].p_gain_  = msg.l_leg_hip_y_p_gain ;
-  // prev_walking_->leg_angle_feed_back_[6].d_gain_  = msg.l_leg_hip_y_d_gain ;
-  // prev_walking_->leg_angle_feed_back_[7].p_gain_  = msg.l_leg_hip_r_p_gain ;
-  // prev_walking_->leg_angle_feed_back_[7].d_gain_  = msg.l_leg_hip_r_d_gain ;
-  // prev_walking_->leg_angle_feed_back_[8].p_gain_  = msg.l_leg_hip_p_p_gain ;
-  // prev_walking_->leg_angle_feed_back_[8].d_gain_  = msg.l_leg_hip_p_d_gain ;
-  // prev_walking_->leg_angle_feed_back_[9].p_gain_  = msg.l_leg_kn_p_p_gain  ;
-  // prev_walking_->leg_angle_feed_back_[9].d_gain_  = msg.l_leg_kn_p_d_gain  ;
-  // prev_walking_->leg_angle_feed_back_[10].p_gain_ = msg.l_leg_an_p_p_gain  ;
-  // prev_walking_->leg_angle_feed_back_[10].d_gain_ = msg.l_leg_an_p_d_gain  ;
-  // prev_walking_->leg_angle_feed_back_[11].p_gain_ = msg.l_leg_an_r_p_gain  ;
-  // prev_walking_->leg_angle_feed_back_[11].d_gain_ = msg.l_leg_an_r_d_gain  ;
+  prev_walking_->leg_angle_feed_back_[6].p_gain_  = msg.l_leg_hip_y_p_gain ;
+  prev_walking_->leg_angle_feed_back_[6].d_gain_  = msg.l_leg_hip_y_d_gain ;
+  prev_walking_->leg_angle_feed_back_[7].p_gain_  = msg.l_leg_hip_r_p_gain ;
+  prev_walking_->leg_angle_feed_back_[7].d_gain_  = msg.l_leg_hip_r_d_gain ;
+  prev_walking_->leg_angle_feed_back_[8].p_gain_  = msg.l_leg_hip_p_p_gain ;
+  prev_walking_->leg_angle_feed_back_[8].d_gain_  = msg.l_leg_hip_p_d_gain ;
+  prev_walking_->leg_angle_feed_back_[9].p_gain_  = msg.l_leg_kn_p_p_gain  ;
+  prev_walking_->leg_angle_feed_back_[9].d_gain_  = msg.l_leg_kn_p_d_gain  ;
+  prev_walking_->leg_angle_feed_back_[10].p_gain_ = msg.l_leg_an_p_p_gain  ;
+  prev_walking_->leg_angle_feed_back_[10].d_gain_ = msg.l_leg_an_p_d_gain  ;
+  prev_walking_->leg_angle_feed_back_[11].p_gain_ = msg.l_leg_an_r_p_gain  ;
+  prev_walking_->leg_angle_feed_back_[11].d_gain_ = msg.l_leg_an_r_d_gain  ;
 }
-
 
 void OP3PreviewWalkingModule::updateJointFeedBackGain()
 {
@@ -1192,10 +1191,10 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
   << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.roll << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.pitch << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.yaw << " " 
   << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.x     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.y      << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.z  << " " 
   << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.roll  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.pitch  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.yaw  << " " 
-  << prev_walking_->out_angle_rad_[0] << " " << prev_walking_->out_angle_rad_[1] << " " << prev_walking_->out_angle_rad_[2] << " " 
-  << prev_walking_->out_angle_rad_[3] << " " << prev_walking_->out_angle_rad_[4] << " " << prev_walking_->out_angle_rad_[5] << " " 
-  << prev_walking_->out_angle_rad_[6] << " " << prev_walking_->out_angle_rad_[7] << " " << prev_walking_->out_angle_rad_[8] << " " 
-  << prev_walking_->out_angle_rad_[9] << " " << prev_walking_->out_angle_rad_[10] << " " << prev_walking_->out_angle_rad_[11] << " " 
+  << prev_walking_->r_leg_out_angle_rad_[0] << " " << prev_walking_->r_leg_out_angle_rad_[1] << " " << prev_walking_->r_leg_out_angle_rad_[2] << " " 
+  << prev_walking_->r_leg_out_angle_rad_[3] << " " << prev_walking_->r_leg_out_angle_rad_[4] << " " << prev_walking_->r_leg_out_angle_rad_[5] << " " 
+  << prev_walking_->l_leg_out_angle_rad_[0] << " " << prev_walking_->l_leg_out_angle_rad_[1] << " " << prev_walking_->l_leg_out_angle_rad_[2] << " " 
+  << prev_walking_->l_leg_out_angle_rad_[3] << " " << prev_walking_->l_leg_out_angle_rad_[4] << " " << prev_walking_->l_leg_out_angle_rad_[5] << " " 
   << prev_walking_->curr_angle_rad_[0] << " " << prev_walking_->curr_angle_rad_[1] << " " << prev_walking_->curr_angle_rad_[2] << " " 
   << prev_walking_->curr_angle_rad_[3] << " " << prev_walking_->curr_angle_rad_[4] << " " << prev_walking_->curr_angle_rad_[5] << " " 
   << prev_walking_->curr_angle_rad_[6] << " " << prev_walking_->curr_angle_rad_[7] << " " << prev_walking_->curr_angle_rad_[8] << " " 

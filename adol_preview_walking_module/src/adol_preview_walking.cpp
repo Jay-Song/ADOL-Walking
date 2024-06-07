@@ -10,6 +10,31 @@
 using namespace adol;
 
 
+PIDController::PIDController(double control_time_sec)
+{
+  p_gain_ = 0;
+  i_gain_ = 0;
+  d_gain_ = 0;
+
+  control_time_sec_ = control_time_sec;
+  curr_err_ = 0;
+  prev_err_ = 0;
+  sum_err_ = 0;
+}
+
+PIDController::~PIDController()
+{ }
+
+double PIDController::getFeedBack(double desired, double current)
+{
+  prev_err_ = curr_err_;
+  curr_err_ = desired - current;
+  sum_err_ += curr_err_;
+  
+  return p_gain_*curr_err_ + i_gain_*sum_err_*control_time_sec_ + d_gain_*(curr_err_ - prev_err_)/control_time_sec_;
+}
+
+
 PreviewWalking::PreviewWalking()
 {
   op3_kd_ = 0;
@@ -21,8 +46,8 @@ PreviewWalking::PreviewWalking()
 
   //balance_error_ = heroehs::BalanceControlError::NoError;
 
-  mat_imu_frame_ref_ = robotis_framework::getRotationX(M_PI) * robotis_framework::getRotationZ(-0.5*M_PI);
-  mat_imu_frame_ref_inv_ = mat_imu_frame_ref_.transpose();
+  //mat_imu_frame_ref_ = robotis_framework::getRotationX(M_PI) * robotis_framework::getRotationZ(-0.5*M_PI);
+  //mat_imu_frame_ref_inv_ = mat_imu_frame_ref_.transpose();
 
 
   // sensor values
@@ -76,11 +101,13 @@ void PreviewWalking::initialize(double lipm_height_m, double preview_time_sec, d
   mat_right_force_.fill(0);  mat_left_force_.fill(0);
   mat_right_torque_.fill(0); mat_left_torque_.fill(0);
 
-  // for(int feed_forward_idx = 0; feed_forward_idx < 12; feed_forward_idx++)
-  // {
-  //   leg_angle_feed_back_[feed_forward_idx].p_gain_ = 0;
-  //   leg_angle_feed_back_[feed_forward_idx].d_gain_ = 0;
-  // }
+  for(int feed_forward_idx = 0; feed_forward_idx < 12; feed_forward_idx++)
+  {
+    leg_angle_feed_back_[feed_forward_idx].control_time_sec_ = control_cycle_sec;
+    leg_angle_feed_back_[feed_forward_idx].p_gain_ = 1.0;
+    leg_angle_feed_back_[feed_forward_idx].i_gain_ = 0;
+    leg_angle_feed_back_[feed_forward_idx].d_gain_ = 0;
+  }
 
   mat_g_to_acc_.resize(4, 1);
   mat_g_to_acc_.fill(0);
@@ -292,15 +319,11 @@ void PreviewWalking::process()
 	  out_angle_rad_[i+6] = l_leg_out_angle_rad_[i];
   }
 
-  //for(int angle_idx = 0; angle_idx < 6; angle_idx++)
-  //{
-    //leg_angle_feed_back_[angle_idx+0].desired_ = out_angle_rad_[angle_idx];
-    //leg_angle_feed_back_[angle_idx+6].desired_ = out_angle_rad_[angle_idx+6];
-    //out_angle_rad_[angle_idx+0] = out_angle_rad_[angle_idx+0] + leg_angle_feed_back_[angle_idx+0].getFeedBack(curr_angle_rad_[angle_idx]);
-    //out_angle_rad_[angle_idx+6] = out_angle_rad_[angle_idx+6] + leg_angle_feed_back_[angle_idx+6].getFeedBack(curr_angle_rad_[angle_idx+6]);
-//      out_angle_rad_[angle_idx+0] = r_leg_out_angle_rad_[angle_idx];
-//      out_angle_rad_[angle_idx+6] = l_leg_out_angle_rad_[angle_idx];
-  //}
+  for(int angle_idx = 0; angle_idx < 6; angle_idx++)
+  {
+    out_angle_rad_[angle_idx+0] = out_angle_rad_[angle_idx+0] + leg_angle_feed_back_[angle_idx+0].getFeedBack(out_angle_rad_[angle_idx],   curr_angle_rad_[angle_idx]);
+    out_angle_rad_[angle_idx+6] = out_angle_rad_[angle_idx+6] + leg_angle_feed_back_[angle_idx+6].getFeedBack(out_angle_rad_[angle_idx+6], curr_angle_rad_[angle_idx+6]);
+  }
 }
 
 bool PreviewWalking::isRunning()

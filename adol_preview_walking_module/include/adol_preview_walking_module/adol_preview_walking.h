@@ -18,6 +18,24 @@
 namespace adol
 {
 
+class PIDController
+{
+public:
+  PIDController(double control_time_sec = 0.008);
+  ~PIDController();
+
+
+  double getFeedBack(double desired, double current);
+
+  double control_time_sec_;
+  double p_gain_, i_gain_, d_gain_;
+
+  double curr_err_;
+  double prev_err_;
+  double sum_err_;
+};
+
+
 class PreviewWalking 
 {
 public:
@@ -54,7 +72,7 @@ public:
   double curr_angle_rad_[12];
   double curr_torque_Nm_[12];
 
-  //heroehs::PDController leg_angle_feed_back_[12];
+  PIDController leg_angle_feed_back_[12];
 
   // balance control
   //int balance_index_;
@@ -69,7 +87,7 @@ public:
   //imu
   Eigen::Quaterniond quat_current_imu_;
   Eigen::Matrix3d mat_current_imu_;
-  Eigen::Matrix3d mat_imu_frame_ref_, mat_imu_frame_ref_inv_;
+  //Eigen::Matrix3d mat_imu_frame_ref_, mat_imu_frame_ref_inv_;
   double current_imu_roll_rad_, current_imu_pitch_rad_;
   double current_gyro_roll_rad_per_sec_, current_gyro_pitch_rad_per_sec_;
 
