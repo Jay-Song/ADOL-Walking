@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   robotis_controller
   robotis_math
   op3_kinematics_dynamics  
-  open_cr_module
+  adol_open_cr_module
   op3_base_module
   adol_preview_walking_module
 )

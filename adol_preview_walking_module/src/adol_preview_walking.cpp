@@ -104,10 +104,37 @@ void PreviewWalking::initialize(double lipm_height_m, double preview_time_sec, d
   for(int feed_forward_idx = 0; feed_forward_idx < 12; feed_forward_idx++)
   {
     leg_angle_feed_back_[feed_forward_idx].control_time_sec_ = control_cycle_sec;
-    leg_angle_feed_back_[feed_forward_idx].p_gain_ = 1.0;
+    leg_angle_feed_back_[feed_forward_idx].p_gain_ = 0.0;
     leg_angle_feed_back_[feed_forward_idx].i_gain_ = 0;
     leg_angle_feed_back_[feed_forward_idx].d_gain_ = 0;
   }
+  
+  // // op3 current
+  // // hip roll
+  // leg_angle_feed_back_[1].p_gain_ = 0.2;
+  // leg_angle_feed_back_[7].p_gain_ = 0.2;
+
+  // // hip pitch
+  // leg_angle_feed_back_[2].p_gain_ = 0.01;
+  // leg_angle_feed_back_[8].p_gain_ = 0.01;
+
+  // // knee 
+  // leg_angle_feed_back_[3].p_gain_ = 0.1;
+  // leg_angle_feed_back_[9].p_gain_ = 0.1;
+
+
+  // op3 position
+  // hip roll
+  leg_angle_feed_back_[1].p_gain_ = 0.1; // 0.2
+  leg_angle_feed_back_[7].p_gain_ = 0.1;
+
+  // hip pitch
+  leg_angle_feed_back_[2].p_gain_ = 0.01;
+  leg_angle_feed_back_[8].p_gain_ = 0.01;
+
+  // knee 
+  leg_angle_feed_back_[3].p_gain_ = 0.5;
+  leg_angle_feed_back_[9].p_gain_ = 0.5;
 
   mat_g_to_acc_.resize(4, 1);
   mat_g_to_acc_.fill(0);
@@ -344,6 +371,8 @@ void PreviewWalking::setCurrentIMUSensorOutput(double gyro_x, double gyro_y, dou
   quat_current_imu_.z() = quat_z;
   quat_current_imu_.w() = quat_w;
 
+  robotis_framework::
+
   //mat_current_imu_ = (mat_imu_frame_ref_ * quat_current_imu_.toRotationMatrix()) * mat_imu_frame_ref_inv_;
 
   //current_imu_roll_rad_  = atan2( mat_current_imu_.coeff(2,1), mat_current_imu_.coeff(2,2));
@@ -351,6 +380,20 @@ void PreviewWalking::setCurrentIMUSensorOutput(double gyro_x, double gyro_y, dou
 
   //std::cout << "gx : " << current_gyro_roll_rad_per_sec_ << " gy : " << current_gyro_pitch_rad_per_sec_
       //<< " x : " << current_imu_roll_rad_ << " y : " << current_imu_pitch_rad_ << std::endl;
+
+  imu_data_mutex_lock_.unlock();
+}
+
+void PreviewWalking::setCurrentIMUSensorOutput(double gyro_x, double gyro_y, double roll, double pitch, double yaw)
+{
+  imu_data_mutex_lock_.lock();
+
+  current_gyro_roll_rad_per_sec_  = gyro_x;
+  current_gyro_pitch_rad_per_sec_ = gyro_y;
+
+  current_imu_roll_rad_ = roll;
+  current_imu_pitch_rad_ = pitch;
+
 
   imu_data_mutex_lock_.unlock();
 }

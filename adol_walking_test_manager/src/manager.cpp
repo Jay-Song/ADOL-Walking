@@ -6,7 +6,7 @@
 #include "robotis_controller/robotis_controller.h"
 
 /* Sensor Module Header */
-#include "open_cr_module/open_cr_module.h"
+#include "adol_open_cr_module/adol_open_cr_module.h"
 
 /* Motion Module Header */
 #include "op3_base_module/base_module.h"
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
   if (simulation_flag == false)
   {
     /* Add Sensor Module */
-    controller->addSensorModule((SensorModule *)OpenCRModule::getInstance());
+    controller->addSensorModule((SensorModule *) adol::OpenCRModule::getInstance());
   }
 
   controller->addMotionModule((MotionModule*) BaseModule::getInstance());

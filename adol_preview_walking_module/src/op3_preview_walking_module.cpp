@@ -1128,6 +1128,8 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
     prev_walking_->curr_torque_Nm_[11] = (int16_t) dxls["l_ank_roll"]->dxl_state_->bulk_read_table_["present_current"] ;
     // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["head_pan"]->dxl_state_->bulk_read_table_["present_current"]   ;
     // prev_walking_->curr_torque_Nm_[0] = (int16_t) dxls["head_tilt"]->dxl_state_->bulk_read_table_["present_current"]  ;
+
+    prev_walking_->setCurrentIMUSensorOutput(sensors["gyro_x"], sensors["gyro_y"], sensors["roll"], sensors["pitch"], sensors["yaw"]);
   }
   
   
@@ -1202,10 +1204,12 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
   << prev_walking_->curr_torque_Nm_[0] << " " << prev_walking_->curr_torque_Nm_[1] << " " << prev_walking_->curr_torque_Nm_[2] << " " 
   << prev_walking_->curr_torque_Nm_[3] << " " << prev_walking_->curr_torque_Nm_[4] << " " << prev_walking_->curr_torque_Nm_[5] << " " 
   << prev_walking_->curr_torque_Nm_[6] << " " << prev_walking_->curr_torque_Nm_[7] << " " << prev_walking_->curr_torque_Nm_[8] << " " 
-  << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " 
-  << imu_data_.orientation.x << " " << imu_data_.orientation.y << " " << imu_data_.orientation.z << " " << imu_data_.orientation.w << " "
-  << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "
-  << std::endl;
+  << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " ;
+
+  if (gazebo_)
+    std::cout << imu_data_.orientation.x << " " << imu_data_.orientation.y << " " << imu_data_.orientation.z << " " << imu_data_.orientation.w << " "  << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "  << std::endl;
+  else
+    std::cout << sensors["roll"] << " " << sensors["pitch"] << " " << sensors["yaw"] << " " << std::endl;
 
   present_running = isRunning();
   if(previous_running_ != present_running)
@@ -1235,12 +1239,6 @@ void OP3PreviewWalkingModule::stop()
 
 void OP3PreviewWalkingModule::imuDataOutputCallback(const sensor_msgs::Imu::ConstPtr &msg)
 {
-  //   ALICEOnlineWalking *online_walking = ALICEOnlineWalking::getInstance();
-
-//   online_walking->setCurrentIMUSensorOutput((msg->angular_velocity.y), (msg->angular_velocity.x),
-//                                             msg->orientation.x, msg->orientation.y, msg->orientation.z,
-//                                             msg->orientation.w);
-
   prev_walking_->setCurrentIMUSensorOutput(msg->angular_velocity.x, msg->angular_velocity.y, msg->orientation.x, msg->orientation.y, msg->orientation.z, msg->orientation.w);
   imu_data_ = *msg;
 }

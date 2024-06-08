@@ -80,6 +80,7 @@ public:
   //heroehs::BalanceControlUsingPDController balance_ctrl_;
 
   void setCurrentIMUSensorOutput(double gyro_x, double gyro_y, double quat_x, double quat_y, double quat_z, double quat_w);
+  void setCurrentIMUSensorOutput(double gyro_x, double gyro_y, double roll, double pitch, double yaw);
   void setCurrentFTSensorOutput(double rfx, double rfy, double rfz, double rtx, double rty, double rtz,
       double lfx, double lfy, double lfz, double ltx, double lty, double ltz);
 

@@ -19,7 +19,7 @@
   <depend>robotis_controller</depend>
   <depend>robotis_math</depend>
   <depend>op3_kinematics_dynamics</depend>
-  <depend>open_cr_module</depend>
+  <depend>adol_open_cr_module</depend>
   <depend>op3_base_module</depend>
   <depend>adol_preview_walking_module</depend>
   
