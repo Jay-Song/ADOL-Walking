@@ -125,12 +125,12 @@ void PreviewWalking::initialize(double lipm_height_m, double preview_time_sec, d
 
   // op3 position
   // hip roll
-  leg_angle_feed_back_[1].p_gain_ = 0.1; // 0.2
-  leg_angle_feed_back_[7].p_gain_ = 0.1;
+  leg_angle_feed_back_[1].p_gain_ = 0.2; // 0.2
+  leg_angle_feed_back_[7].p_gain_ = 0.2;
 
   // hip pitch
-  leg_angle_feed_back_[2].p_gain_ = 0.01;
-  leg_angle_feed_back_[8].p_gain_ = 0.01;
+  leg_angle_feed_back_[2].p_gain_ = 0.2;
+  leg_angle_feed_back_[8].p_gain_ = 0.2;
 
   // knee 
   leg_angle_feed_back_[3].p_gain_ = 0.5;
@@ -345,11 +345,29 @@ void PreviewWalking::process()
 	  out_angle_rad_[i+6] = l_leg_out_angle_rad_[i];
   }
 
+  // gyro feedback: direction * internal gain * balance gain * gyro_errr (0 - gyro) 
+  double internal_gain = 0.05;
+  double roll_gyro_err  = 0.0 - current_gyro_roll_rad_per_sec_;
+  double pitch_gyro_err = 0.0 - current_gyro_pitch_rad_per_sec_;
+  
+  out_angle_rad_[1] += -1.0 * internal_gain * 0.35 * roll_gyro_err; // r hip roll
+  out_angle_rad_[7] += -1.0 * internal_gain * 0.35 * roll_gyro_err; // l hip roll
+
+  out_angle_rad_[3] += -1.0* -1.0 * internal_gain * 0.3 * pitch_gyro_err; // r knee
+  out_angle_rad_[9] += -1.0*  1.0 * internal_gain * 0.3 * pitch_gyro_err; // l knee
+
+  out_angle_rad_[4] += -1.0*  1.0 * internal_gain * 0.9 * pitch_gyro_err; // r ank pitch
+  out_angle_rad_[10] += -1.0* -1.0 * internal_gain * 0.9 * pitch_gyro_err; // l ank pitch
+
+  out_angle_rad_[5]  += -1.0* 1.0 * internal_gain * 0.7 * roll_gyro_err; // r ank roll
+  out_angle_rad_[11] += -1.0* 1.0 * internal_gain * 0.7 * roll_gyro_err; // l ank roll
+
   for(int angle_idx = 0; angle_idx < 6; angle_idx++)
   {
     out_angle_rad_[angle_idx+0] = out_angle_rad_[angle_idx+0] + leg_angle_feed_back_[angle_idx+0].getFeedBack(out_angle_rad_[angle_idx],   curr_angle_rad_[angle_idx]);
     out_angle_rad_[angle_idx+6] = out_angle_rad_[angle_idx+6] + leg_angle_feed_back_[angle_idx+6].getFeedBack(out_angle_rad_[angle_idx+6], curr_angle_rad_[angle_idx+6]);
   }
+  
 }
 
 bool PreviewWalking::isRunning()

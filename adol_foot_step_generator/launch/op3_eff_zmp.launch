@@ -3,7 +3,7 @@
     <param name="/adol/dsp_ratio"               type="double"   value="0.2"/>
     <param name="/adol/foot_z_swap_m"           type="double"   value="0.05"/>
     <param name="/adol/body_z_swap_m"           type="double"   value="0.0"/>
-    <param name="/adol/x_zmp_shift_m"           type="double"   value="0.00"/>
+    <param name="/adol/x_zmp_shift_m"           type="double"   value="0.04"/>
     <param name="/adol/y_zmp_convergence_m"     type="double"   value="0.005"/>
     <param name="/adol/default_y_feet_offset_m" type="double"   value="0.07"/>
     
