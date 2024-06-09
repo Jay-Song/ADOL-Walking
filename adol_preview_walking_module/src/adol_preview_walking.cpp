@@ -194,7 +194,6 @@ void PreviewWalking::process()
   //                                                    mat_left_torque_.coeff(0,0),  mat_left_torque_.coeff(1,0),  mat_left_torque_.coeff(2,0));
   ft_data_mutex_lock_.unlock();
 
-  //balance_index_ = walking_pattern_.current_balancing_index_;
   double r_target_fx_N = 0;
   double l_target_fx_N = 0;
   double r_target_fy_N = 0;
@@ -207,7 +206,7 @@ void PreviewWalking::process()
   mat_g_to_acc_.coeffRef(1,0) = walking_pattern_.y_lipm_.coeff(2,0);
   mat_robot_to_acc_ = (mat_robot_to_pelvis_* mat_pelvis_to_g_) * mat_g_to_acc_;
 
-  // switch(balance_index_)
+  // switch(walking_pattern_.current_balancing_index_)
   //  {
   //  case 0:
   //    //fprintf(stderr, "DSP : START\n");
@@ -358,7 +357,6 @@ bool PreviewWalking::isRunning()
   return walking_pattern_.isRunning();
 }
 
-
 void PreviewWalking::setCurrentIMUSensorOutput(double gyro_x, double gyro_y, double quat_x, double quat_y, double quat_z, double quat_w)
 {
   imu_data_mutex_lock_.lock();
@@ -371,15 +369,10 @@ void PreviewWalking::setCurrentIMUSensorOutput(double gyro_x, double gyro_y, dou
   quat_current_imu_.z() = quat_z;
   quat_current_imu_.w() = quat_w;
 
-  robotis_framework::
+  Eigen::Vector3d rpy = robotis_framework::convertQuaternionToRPY(quat_current_imu_);
 
-  //mat_current_imu_ = (mat_imu_frame_ref_ * quat_current_imu_.toRotationMatrix()) * mat_imu_frame_ref_inv_;
-
-  //current_imu_roll_rad_  = atan2( mat_current_imu_.coeff(2,1), mat_current_imu_.coeff(2,2));
-  //current_imu_pitch_rad_ = atan2(-mat_current_imu_.coeff(2,0), sqrt(robotis_framework::powDI(mat_current_imu_.coeff(2,1), 2) + robotis_framework::powDI(mat_current_imu_.coeff(2,2), 2)));
-
-  //std::cout << "gx : " << current_gyro_roll_rad_per_sec_ << " gy : " << current_gyro_pitch_rad_per_sec_
-      //<< " x : " << current_imu_roll_rad_ << " y : " << current_imu_pitch_rad_ << std::endl;
+  current_imu_roll_rad_ = rpy(0);
+  current_imu_pitch_rad_ = rpy(1);
 
   imu_data_mutex_lock_.unlock();
 }

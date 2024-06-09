@@ -1204,12 +1204,13 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
   << prev_walking_->curr_torque_Nm_[0] << " " << prev_walking_->curr_torque_Nm_[1] << " " << prev_walking_->curr_torque_Nm_[2] << " " 
   << prev_walking_->curr_torque_Nm_[3] << " " << prev_walking_->curr_torque_Nm_[4] << " " << prev_walking_->curr_torque_Nm_[5] << " " 
   << prev_walking_->curr_torque_Nm_[6] << " " << prev_walking_->curr_torque_Nm_[7] << " " << prev_walking_->curr_torque_Nm_[8] << " " 
-  << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " ;
+  << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " 
+  << prev_walking_->current_imu_roll_rad_ << " " << prev_walking_->current_imu_pitch_rad_;
 
   if (gazebo_)
-    std::cout << imu_data_.orientation.x << " " << imu_data_.orientation.y << " " << imu_data_.orientation.z << " " << imu_data_.orientation.w << " "  << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "  << std::endl;
+    std::cout << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "  << std::endl;
   else
-    std::cout << sensors["roll"] << " " << sensors["pitch"] << " " << sensors["yaw"] << " " << std::endl;
+    std::cout << " " << std::endl;
 
   present_running = isRunning();
   if(previous_running_ != present_running)
