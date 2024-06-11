@@ -1157,6 +1157,8 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
   result_["l_ank_pitch"]->goal_position_ = prev_walking_->out_angle_rad_[10];
   result_["l_ank_roll" ]->goal_position_ = prev_walking_->out_angle_rad_[11];
 
+  std::cout << result_["r_hip_pitch"]->position_p_gain_ << " " << dxls["r_hip_pitch"]->dxl_state_->position_p_gain_ << std::endl;
+  
 //  walking_joint_states_msg_.header.stamp = ros::Time::now();
 //  walking_joint_states_msg_.r_goal_hip_y = online_walking->r_leg_out_angle_rad_[0];
 //  walking_joint_states_msg_.r_goal_hip_r = online_walking->r_leg_out_angle_rad_[1];
@@ -1185,32 +1187,32 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
 //  walking_joint_states_msg_.l_present_an_r  = online_walking->curr_angle_rad_[11];
 //  walking_joint_states_pub_.publish(walking_joint_states_msg_);
 
-  std::cout << prev_walking_->walking_pattern_.current_balancing_index_ << " " <<  prev_walking_->walking_pattern_.x_lipm_(0,0) << " " << prev_walking_->walking_pattern_.y_lipm_(0,0) << " " 
-  << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_x_.coeff(0,0) << " " << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_y_.coeff(0,0) << " " 
-  << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.x          << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.y           << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.z << " " 
-  << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.roll       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.pitch       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.yaw << " " 
-  << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.x    << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.y     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.z << " " 
-  << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.roll << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.pitch << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.yaw << " " 
-  << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.x     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.y      << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.z  << " " 
-  << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.roll  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.pitch  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.yaw  << " " 
-  << prev_walking_->r_leg_out_angle_rad_[0] << " " << prev_walking_->r_leg_out_angle_rad_[1] << " " << prev_walking_->r_leg_out_angle_rad_[2] << " " 
-  << prev_walking_->r_leg_out_angle_rad_[3] << " " << prev_walking_->r_leg_out_angle_rad_[4] << " " << prev_walking_->r_leg_out_angle_rad_[5] << " " 
-  << prev_walking_->l_leg_out_angle_rad_[0] << " " << prev_walking_->l_leg_out_angle_rad_[1] << " " << prev_walking_->l_leg_out_angle_rad_[2] << " " 
-  << prev_walking_->l_leg_out_angle_rad_[3] << " " << prev_walking_->l_leg_out_angle_rad_[4] << " " << prev_walking_->l_leg_out_angle_rad_[5] << " " 
-  << prev_walking_->curr_angle_rad_[0] << " " << prev_walking_->curr_angle_rad_[1] << " " << prev_walking_->curr_angle_rad_[2] << " " 
-  << prev_walking_->curr_angle_rad_[3] << " " << prev_walking_->curr_angle_rad_[4] << " " << prev_walking_->curr_angle_rad_[5] << " " 
-  << prev_walking_->curr_angle_rad_[6] << " " << prev_walking_->curr_angle_rad_[7] << " " << prev_walking_->curr_angle_rad_[8] << " " 
-  << prev_walking_->curr_angle_rad_[9] << " " << prev_walking_->curr_angle_rad_[10] << " " << prev_walking_->curr_angle_rad_[11] << " " 
-  << prev_walking_->curr_torque_Nm_[0] << " " << prev_walking_->curr_torque_Nm_[1] << " " << prev_walking_->curr_torque_Nm_[2] << " " 
-  << prev_walking_->curr_torque_Nm_[3] << " " << prev_walking_->curr_torque_Nm_[4] << " " << prev_walking_->curr_torque_Nm_[5] << " " 
-  << prev_walking_->curr_torque_Nm_[6] << " " << prev_walking_->curr_torque_Nm_[7] << " " << prev_walking_->curr_torque_Nm_[8] << " " 
-  << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " 
-  << prev_walking_->current_imu_roll_rad_ << " " << prev_walking_->current_imu_pitch_rad_;
+  // std::cout << prev_walking_->walking_pattern_.current_balancing_index_ << " " <<  prev_walking_->walking_pattern_.x_lipm_(0,0) << " " << prev_walking_->walking_pattern_.y_lipm_(0,0) << " " 
+  // << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_x_.coeff(0,0) << " " << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_y_.coeff(0,0) << " " 
+  // << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.x          << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.y           << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.z << " " 
+  // << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.roll       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.pitch       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.yaw << " " 
+  // << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.x    << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.y     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.z << " " 
+  // << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.roll << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.pitch << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.yaw << " " 
+  // << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.x     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.y      << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.z  << " " 
+  // << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.roll  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.pitch  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.yaw  << " " 
+  // << prev_walking_->r_leg_out_angle_rad_[0] << " " << prev_walking_->r_leg_out_angle_rad_[1] << " " << prev_walking_->r_leg_out_angle_rad_[2] << " " 
+  // << prev_walking_->r_leg_out_angle_rad_[3] << " " << prev_walking_->r_leg_out_angle_rad_[4] << " " << prev_walking_->r_leg_out_angle_rad_[5] << " " 
+  // << prev_walking_->l_leg_out_angle_rad_[0] << " " << prev_walking_->l_leg_out_angle_rad_[1] << " " << prev_walking_->l_leg_out_angle_rad_[2] << " " 
+  // << prev_walking_->l_leg_out_angle_rad_[3] << " " << prev_walking_->l_leg_out_angle_rad_[4] << " " << prev_walking_->l_leg_out_angle_rad_[5] << " " 
+  // << prev_walking_->curr_angle_rad_[0] << " " << prev_walking_->curr_angle_rad_[1] << " " << prev_walking_->curr_angle_rad_[2] << " " 
+  // << prev_walking_->curr_angle_rad_[3] << " " << prev_walking_->curr_angle_rad_[4] << " " << prev_walking_->curr_angle_rad_[5] << " " 
+  // << prev_walking_->curr_angle_rad_[6] << " " << prev_walking_->curr_angle_rad_[7] << " " << prev_walking_->curr_angle_rad_[8] << " " 
+  // << prev_walking_->curr_angle_rad_[9] << " " << prev_walking_->curr_angle_rad_[10] << " " << prev_walking_->curr_angle_rad_[11] << " " 
+  // << prev_walking_->curr_torque_Nm_[0] << " " << prev_walking_->curr_torque_Nm_[1] << " " << prev_walking_->curr_torque_Nm_[2] << " " 
+  // << prev_walking_->curr_torque_Nm_[3] << " " << prev_walking_->curr_torque_Nm_[4] << " " << prev_walking_->curr_torque_Nm_[5] << " " 
+  // << prev_walking_->curr_torque_Nm_[6] << " " << prev_walking_->curr_torque_Nm_[7] << " " << prev_walking_->curr_torque_Nm_[8] << " " 
+  // << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " 
+  // << prev_walking_->current_imu_roll_rad_ << " " << prev_walking_->current_imu_pitch_rad_ << " ";
 
-  if (gazebo_)
-    std::cout << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "  << std::endl;
-  else
-    std::cout << " " << std::endl;
+  // if (gazebo_)
+  //   std::cout << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "  << std::endl;
+  // else
+  //   std::cout << " " << std::endl;
 
   present_running = isRunning();
   if(previous_running_ != present_running)

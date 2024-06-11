@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     {
       adol_foot_step_generator::FootStepCommand cmd_msg;
       cmd_msg.command = "forward";
-      cmd_msg.step_num = 3;
+      cmd_msg.step_num = 4;
       cmd_msg.step_time = step_time_sec;
       cmd_msg.step_length = step_length_m;
       cmd_msg.side_step_length = 0;
