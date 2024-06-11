@@ -138,7 +138,7 @@ int main(int argc, char **argv)
   pelvis.roll = 0.0; pelvis.pitch = 0.0; pelvis.yaw = 0;
 
   adol::OP3PreviewWalkingModule::getInstance()->setInitialPose(r_foot, l_foot, pelvis);
-  adol::OP3PreviewWalkingModule::getInstance()->setLIPMHeight(0.22);
+  adol::OP3PreviewWalkingModule::getInstance()->setLIPMHeight(0.23);
 
 
   if (simulation_flag == false)
