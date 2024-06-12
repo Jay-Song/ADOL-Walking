@@ -89,6 +89,8 @@ private:
   int convertStepDataMsgToStepData(adol_preview_walking_module_msgs::StepData& src, robotis_framework::StepData& des);
   int convertStepDataToStepDataMsg(robotis_framework::StepData& src, adol_preview_walking_module_msgs::StepData& des);
 
+  void setJointGains(int balancing_idx);
+
   void setBalanceParam(adol_preview_walking_module_msgs::BalanceParam& balance_param_msg);
 
   void updateBalanceParam();

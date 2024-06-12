@@ -1,7 +1,7 @@
 offset:
   head_pan: 0
   head_tilt: 0
-  l_ank_pitch: 0
+  l_ank_pitch: -0.01570796326794895
   l_ank_roll: 0
   l_el: 0
   l_hip_pitch: -0.00698131700797732

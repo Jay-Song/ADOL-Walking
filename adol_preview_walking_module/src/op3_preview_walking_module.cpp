@@ -1157,8 +1157,22 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
   result_["l_ank_pitch"]->goal_position_ = prev_walking_->out_angle_rad_[10];
   result_["l_ank_roll" ]->goal_position_ = prev_walking_->out_angle_rad_[11];
 
-  std::cout << result_["r_hip_pitch"]->position_p_gain_ << " " << dxls["r_hip_pitch"]->dxl_state_->position_p_gain_ << std::endl;
-  
+
+  setJointGains(prev_walking_->walking_pattern_.current_balancing_index_);
+
+  // std::cout << result_["r_hip_yaw"  ]->position_p_gain_ << " "
+  // << dxls["r_hip_roll" ]->dxl_state_->position_p_gain_ << " "
+  // << result_["r_hip_pitch"]->position_p_gain_ << " "
+  // << result_["r_knee"     ]->position_p_gain_ << " "
+  // << result_["r_ank_pitch"]->position_p_gain_ << " "
+  // << result_["r_ank_roll" ]->position_p_gain_ << " "
+  // << result_["l_hip_yaw"  ]->position_p_gain_ << " "
+  // << dxls["l_hip_roll" ]->dxl_state_->position_p_gain_ << " "
+  // << result_["l_hip_pitch"]->position_p_gain_ << " "
+  // << result_["l_knee"     ]->position_p_gain_ << " "
+  // << result_["l_ank_pitch"]->position_p_gain_ << " "
+  // << result_["l_ank_roll" ]->position_p_gain_ << " " << std::endl;
+
 //  walking_joint_states_msg_.header.stamp = ros::Time::now();
 //  walking_joint_states_msg_.r_goal_hip_y = online_walking->r_leg_out_angle_rad_[0];
 //  walking_joint_states_msg_.r_goal_hip_r = online_walking->r_leg_out_angle_rad_[1];
@@ -1187,32 +1201,33 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
 //  walking_joint_states_msg_.l_present_an_r  = online_walking->curr_angle_rad_[11];
 //  walking_joint_states_pub_.publish(walking_joint_states_msg_);
 
-  // std::cout << prev_walking_->walking_pattern_.current_balancing_index_ << " " <<  prev_walking_->walking_pattern_.x_lipm_(0,0) << " " << prev_walking_->walking_pattern_.y_lipm_(0,0) << " " 
-  // << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_x_.coeff(0,0) << " " << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_y_.coeff(0,0) << " " 
-  // << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.x          << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.y           << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.z << " " 
-  // << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.roll       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.pitch       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.yaw << " " 
-  // << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.x    << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.y     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.z << " " 
-  // << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.roll << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.pitch << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.yaw << " " 
-  // << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.x     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.y      << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.z  << " " 
-  // << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.roll  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.pitch  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.yaw  << " " 
-  // << prev_walking_->r_leg_out_angle_rad_[0] << " " << prev_walking_->r_leg_out_angle_rad_[1] << " " << prev_walking_->r_leg_out_angle_rad_[2] << " " 
-  // << prev_walking_->r_leg_out_angle_rad_[3] << " " << prev_walking_->r_leg_out_angle_rad_[4] << " " << prev_walking_->r_leg_out_angle_rad_[5] << " " 
-  // << prev_walking_->l_leg_out_angle_rad_[0] << " " << prev_walking_->l_leg_out_angle_rad_[1] << " " << prev_walking_->l_leg_out_angle_rad_[2] << " " 
-  // << prev_walking_->l_leg_out_angle_rad_[3] << " " << prev_walking_->l_leg_out_angle_rad_[4] << " " << prev_walking_->l_leg_out_angle_rad_[5] << " " 
-  // << prev_walking_->curr_angle_rad_[0] << " " << prev_walking_->curr_angle_rad_[1] << " " << prev_walking_->curr_angle_rad_[2] << " " 
-  // << prev_walking_->curr_angle_rad_[3] << " " << prev_walking_->curr_angle_rad_[4] << " " << prev_walking_->curr_angle_rad_[5] << " " 
-  // << prev_walking_->curr_angle_rad_[6] << " " << prev_walking_->curr_angle_rad_[7] << " " << prev_walking_->curr_angle_rad_[8] << " " 
-  // << prev_walking_->curr_angle_rad_[9] << " " << prev_walking_->curr_angle_rad_[10] << " " << prev_walking_->curr_angle_rad_[11] << " " 
-  // << prev_walking_->curr_torque_Nm_[0] << " " << prev_walking_->curr_torque_Nm_[1] << " " << prev_walking_->curr_torque_Nm_[2] << " " 
-  // << prev_walking_->curr_torque_Nm_[3] << " " << prev_walking_->curr_torque_Nm_[4] << " " << prev_walking_->curr_torque_Nm_[5] << " " 
-  // << prev_walking_->curr_torque_Nm_[6] << " " << prev_walking_->curr_torque_Nm_[7] << " " << prev_walking_->curr_torque_Nm_[8] << " " 
-  // << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " 
-  // << prev_walking_->current_imu_roll_rad_ << " " << prev_walking_->current_imu_pitch_rad_ << " ";
+  std::cout << prev_walking_->walking_pattern_.current_balancing_index_ << " " <<  prev_walking_->walking_pattern_.x_lipm_(0,0) << " " << prev_walking_->walking_pattern_.y_lipm_(0,0) << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_x_.coeff(0,0) << " " << prev_walking_->walking_pattern_.ep_calculator_.reference_zmp_y_.coeff(0,0) << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.x          << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.y           << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.z << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.roll       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.pitch       << " " << prev_walking_->walking_pattern_.ep_calculator_.present_body_pose_.yaw << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.x    << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.y     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.z << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.roll << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.pitch << " " << prev_walking_->walking_pattern_.ep_calculator_.present_right_foot_pose_.yaw << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.x     << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.y      << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.z  << " " 
+  << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.roll  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.pitch  << " " << prev_walking_->walking_pattern_.ep_calculator_.present_left_foot_pose_.yaw  << " " 
+  << prev_walking_->r_leg_out_angle_rad_[0] << " " << prev_walking_->r_leg_out_angle_rad_[1] << " " << prev_walking_->r_leg_out_angle_rad_[2] << " " 
+  << prev_walking_->r_leg_out_angle_rad_[3] << " " << prev_walking_->r_leg_out_angle_rad_[4] << " " << prev_walking_->r_leg_out_angle_rad_[5] << " " 
+  << prev_walking_->l_leg_out_angle_rad_[0] << " " << prev_walking_->l_leg_out_angle_rad_[1] << " " << prev_walking_->l_leg_out_angle_rad_[2] << " " 
+  << prev_walking_->l_leg_out_angle_rad_[3] << " " << prev_walking_->l_leg_out_angle_rad_[4] << " " << prev_walking_->l_leg_out_angle_rad_[5] << " " 
+  << prev_walking_->curr_angle_rad_[0] << " " << prev_walking_->curr_angle_rad_[1] << " " << prev_walking_->curr_angle_rad_[2] << " " 
+  << prev_walking_->curr_angle_rad_[3] << " " << prev_walking_->curr_angle_rad_[4] << " " << prev_walking_->curr_angle_rad_[5] << " " 
+  << prev_walking_->curr_angle_rad_[6] << " " << prev_walking_->curr_angle_rad_[7] << " " << prev_walking_->curr_angle_rad_[8] << " " 
+  << prev_walking_->curr_angle_rad_[9] << " " << prev_walking_->curr_angle_rad_[10] << " " << prev_walking_->curr_angle_rad_[11] << " " 
+  << prev_walking_->curr_torque_Nm_[0] << " " << prev_walking_->curr_torque_Nm_[1] << " " << prev_walking_->curr_torque_Nm_[2] << " " 
+  << prev_walking_->curr_torque_Nm_[3] << " " << prev_walking_->curr_torque_Nm_[4] << " " << prev_walking_->curr_torque_Nm_[5] << " " 
+  << prev_walking_->curr_torque_Nm_[6] << " " << prev_walking_->curr_torque_Nm_[7] << " " << prev_walking_->curr_torque_Nm_[8] << " " 
+  << prev_walking_->curr_torque_Nm_[9] << " " << prev_walking_->curr_torque_Nm_[10] << " " << prev_walking_->curr_torque_Nm_[11] << " " 
+  << prev_walking_->current_imu_roll_rad_ << " " << prev_walking_->current_imu_pitch_rad_ << " "
+  << prev_walking_->current_gyro_roll_rad_per_sec_ << " " << prev_walking_->current_gyro_pitch_rad_per_sec_ << " ";
 
-  // if (gazebo_)
-  //   std::cout << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "  << std::endl;
-  // else
-  //   std::cout << " " << std::endl;
+  if (gazebo_)
+    std::cout << com_pos_.x << " " << com_pos_.y << " " << com_pos_.z << " "  << std::endl;
+  else
+    std::cout << " " << std::endl;
 
   present_running = isRunning();
   if(previous_running_ != present_running)
@@ -1233,6 +1248,83 @@ void OP3PreviewWalkingModule::process(std::map<std::string, robotis_framework::D
     }
   }
   previous_running_ = present_running;
+}
+
+
+void OP3PreviewWalkingModule::setJointGains(int balancing_idx)
+{
+  if (balancing_idx == 2)
+  {
+    // L_BALANCING (L Support) first half
+    result_["r_hip_roll" ]->position_p_gain_ = 3000;
+    result_["l_hip_roll" ]->position_p_gain_ = 16000;
+
+    result_["r_knee" ]->position_p_gain_ = 4000;
+    result_["l_knee" ]->position_p_gain_ = 8000;
+
+    result_["r_ank_pitch" ]->position_p_gain_ = 1600;
+    result_["l_ank_pitch" ]->position_p_gain_ = 3200;
+
+    result_["r_ank_roll" ]->position_p_gain_ = 1600;
+    result_["l_ank_roll" ]->position_p_gain_ = 3200;
+  }
+  else if (balancing_idx == 3)
+  {
+    // L_BALANCING (L Support) second half
+    result_["r_hip_roll" ]->position_p_gain_ = 3000;
+    result_["l_hip_roll" ]->position_p_gain_ = 16000;
+
+    result_["r_knee" ]->position_p_gain_ = 4000;
+    result_["l_knee" ]->position_p_gain_ = 8000;
+
+    result_["r_ank_pitch" ]->position_p_gain_ = 1600;
+    result_["l_ank_pitch" ]->position_p_gain_ = 3200;
+
+    result_["r_ank_roll" ]->position_p_gain_ = 1600;
+    result_["l_ank_roll" ]->position_p_gain_ = 3200;
+  }
+  else if (balancing_idx == 6)
+  {
+    // R_BALANCING (R Support) first half
+    result_["r_hip_roll" ]->position_p_gain_ = 16000;
+    result_["l_hip_roll" ]->position_p_gain_ = 3000;
+    
+    result_["r_knee" ]->position_p_gain_ = 8000;
+    result_["l_knee" ]->position_p_gain_ = 4000;
+
+    result_["r_ank_pitch" ]->position_p_gain_ = 3200;
+    result_["l_ank_pitch" ]->position_p_gain_ = 1600;
+
+    result_["r_ank_roll" ]->position_p_gain_ = 3200;
+    result_["l_ank_roll" ]->position_p_gain_ = 1600;
+  }
+  else if (balancing_idx == 7)
+  {
+    // R_BALANCING (R Support) second half
+    result_["r_hip_roll" ]->position_p_gain_ = 16000;
+    result_["l_hip_roll" ]->position_p_gain_ = 3000;
+    
+    result_["r_knee" ]->position_p_gain_ = 8000;
+    result_["l_knee" ]->position_p_gain_ = 4000;
+
+    result_["r_ank_pitch" ]->position_p_gain_ = 3200;
+    result_["l_ank_pitch" ]->position_p_gain_ = 1600;
+
+    result_["r_ank_roll" ]->position_p_gain_ = 3200;
+    result_["l_ank_roll" ]->position_p_gain_ = 1600;
+  }
+  else
+  {
+    // DS
+    result_["r_hip_roll" ]->position_p_gain_ = 3000;
+    result_["l_hip_roll" ]->position_p_gain_ = 3000;
+    
+    result_["r_knee" ]->position_p_gain_ = 4000;
+    result_["l_knee" ]->position_p_gain_ = 4000;
+
+    result_["r_ank_roll" ]->position_p_gain_ = 1600;
+    result_["l_ank_roll" ]->position_p_gain_ = 1600;
+  }
 }
 
 void OP3PreviewWalkingModule::stop()

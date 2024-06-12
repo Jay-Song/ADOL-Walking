@@ -346,7 +346,7 @@ void PreviewWalking::process()
   }
 
   // gyro feedback: direction * internal gain * balance gain * gyro_errr (0 - gyro) 
-  double internal_gain = 0.05;
+  double internal_gain = 0.025*1.0;
   double roll_gyro_err  = 0.0 - current_gyro_roll_rad_per_sec_;
   double pitch_gyro_err = 0.0 - current_gyro_pitch_rad_per_sec_;
   
@@ -367,7 +367,6 @@ void PreviewWalking::process()
     out_angle_rad_[angle_idx+0] = out_angle_rad_[angle_idx+0] + leg_angle_feed_back_[angle_idx+0].getFeedBack(out_angle_rad_[angle_idx],   curr_angle_rad_[angle_idx]);
     out_angle_rad_[angle_idx+6] = out_angle_rad_[angle_idx+6] + leg_angle_feed_back_[angle_idx+6].getFeedBack(out_angle_rad_[angle_idx+6], curr_angle_rad_[angle_idx+6]);
   }
-  
 }
 
 bool PreviewWalking::isRunning()
@@ -404,7 +403,6 @@ void PreviewWalking::setCurrentIMUSensorOutput(double gyro_x, double gyro_y, dou
 
   current_imu_roll_rad_ = roll;
   current_imu_pitch_rad_ = pitch;
-
 
   imu_data_mutex_lock_.unlock();
 }

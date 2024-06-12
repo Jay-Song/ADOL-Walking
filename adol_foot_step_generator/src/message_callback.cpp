@@ -184,19 +184,24 @@ void walkingCommandCallback(const adol_foot_step_generator::FootStepCommand::Con
   if(msg->step_length < 0)
   {
     g_foot_stp_generator.fb_step_length_m_ = 0;
+    g_foot_stp_generator.x_zmp_shift_m_ = 0;
     ROS_ERROR_STREAM("step_length is negative.");
-    ROS_ERROR_STREAM("It will be set to zero.");
+    ROS_ERROR_STREAM("step length and x_zmp_shift will be set to zero.");
   }
   else
   {
     g_foot_stp_generator.fb_step_length_m_ = msg->step_length;
+    g_foot_stp_generator.x_zmp_shift_m_ = msg->step_length*0.5;
+    if (g_foot_stp_generator.x_zmp_shift_m_ > 0.04)
+      g_foot_stp_generator.x_zmp_shift_m_ = 0.04;
+
+    ROS_INFO_STREAM("X_ZMP_SHIFT: " << g_foot_stp_generator.x_zmp_shift_m_);
   }
 
   if(msg->side_step_length < 0)
   {
     g_foot_stp_generator.rl_step_length_m_ = 0;
     ROS_ERROR_STREAM("side_step_length is negative.");
-    ROS_ERROR_STREAM("It will be set to zero.");
   }
   else
   {

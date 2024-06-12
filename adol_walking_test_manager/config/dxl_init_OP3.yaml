@@ -53,7 +53,8 @@ l_hip_roll:
   operating_mode: 3
   position_d_gain: 5
   position_i_gain: 100
-  position_p_gain: 4000
+  #position_p_gain: 4000
+  position_p_gain: 3000
   return_delay_time: 1
 l_hip_yaw:
   max_position_limit: 4095
@@ -128,7 +129,8 @@ r_hip_roll:
   operating_mode: 3
   position_d_gain: 5
   position_i_gain: 100
-  position_p_gain: 4000
+  #position_p_gain: 4000
+  position_p_gain: 3000
   return_delay_time: 1
 r_hip_yaw:
   max_position_limit: 4095
